@@ -34,11 +34,15 @@ npm install          # Install dependencies
 npx expo start       # Start the Expo development server
 
 * This will open Expo Dev Tools in your browser.
-
 * You can run the app on a physical device with the Expo Go app or on an emulator.
+* The mobile apps configuration and entry point is handled by app.json and App.js inside this folder.
 
-* The mobile app\'s configuration and entry point is handled by app.json and App.js inside this folder.
+---
 
 cd apps/web
 npm install          # Install dependencies
 npm start            # Start the development server
+
+* Opens the web app at http://localhost:3000
+* The main entry file is src/index.js, which renders the React component from src/App.js.
+* App.js is the main wrapper where you import and render your screens or components.
