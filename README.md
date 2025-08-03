@@ -37,7 +37,7 @@ npx expo start       # Start the Expo development server
 
 * You can run the app on a physical device with the Expo Go app or on an emulator.
 
-* The mobile app's configuration and entry point is handled by app.json and App.js inside this folder.
+* The mobile app\'s configuration and entry point is handled by app.json and App.js inside this folder.
 
 cd apps/web
 npm install          # Install dependencies
