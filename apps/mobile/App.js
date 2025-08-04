@@ -1,9 +1,9 @@
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
-import Login from "./.expo/screens/Login.js"; // Adjust the path if needed
-import Welcome from "./.expo/screens/Welcome.js"; // Adjust the path if needed
-import SignUp from "./.expo/screens/SignUp.js";
-import Profile from "./.expo/screens/Profile.js"; // Adjust the path if needed
+import Login from "../mobile/screens/Login.js"; // Adjust the path if needed
+import Welcome from "../mobile/screens/Welcome.js"; // Adjust the path if needed
+import SignUp from "../mobile/screens/SignUp.js"; // Adjust the path if needed
+import Profile from "../mobile/screens/Profile.js"; // Adjust the path if needed
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -11,7 +11,7 @@ import { Provider as PaperProvider, DefaultTheme } from "react-native-paper";
 
 const theme = {
   ...DefaultTheme,
-  roundness: 50,
+  roundness: 5,
 };
 
 const Stack = createNativeStackNavigator();

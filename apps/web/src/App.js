@@ -7,7 +7,7 @@ import SignUp from './screens/SignUp'; //import your login screen to be rendered
 function App() {
   return (
     <div className="App">
-      <Welcome />
+      <Login />
     </div>
   );
 }

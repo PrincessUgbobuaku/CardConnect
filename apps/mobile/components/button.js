@@ -11,7 +11,9 @@ export function AppButton({ style, children, onPress, ...props }) {
       onPress={onPress}
       // loading="true"
       // onPress={() => console.log("Pressed")}
-      style={style}
+      style={[
+        { borderRadius: 10 },
+      ]}
     >
       {children}
     </PaperButton>
