@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, Platform } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
+// ...existing code...
 import { Card } from 'react-native-paper';
 import { AppButton } from '../components/button'; // Custom button component
 import ScreenHeader from '../components/ScreenHeader'; // Custom header component
 
-import DateTimePicker from '@react-native-community/datetimepicker';
 export default function CardAppointmentScreen() {
   const [date, setDate] = useState(new Date(2024, 8, 14)); // Example default: 14 Sep 2024
   const [showDatePicker, setShowDatePicker] = useState(false);
