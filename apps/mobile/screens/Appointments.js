@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import DateTimePicker from '@react-native-community/datetimepicker';
 // ...existing code...
 import { Card } from 'react-native-paper';
+import InfoCard from '../components/InfoCard';
 import { AppButton } from '../components/button'; // Custom button component
 import ScreenHeader from '../components/ScreenHeader'; // Custom header component
 
@@ -67,15 +68,11 @@ export default function CardAppointmentScreen() {
           </View>
 
           {/* Preview Booking Card */}
-          <Text style={styles.step}>Step 3: Preview booking details</Text>
-          <Card style={styles.previewCard}>
-            <Card.Content>
-              <Text style={styles.previewText}>Booking details:</Text>
-              <Text>Date: {formatDate(date)}</Text>
-              <Text>Time: {selectedTime}</Text>
-              <Text>Location: Cape Peninsula University of Technology</Text>
-            </Card.Content>
-          </Card>
+        <InfoCard title="Booking details">
+          <Text>Date: {formatDate(date)}</Text>
+          <Text>Time: {selectedTime}</Text>
+          <Text>Location: Cape Peninsula University of Technology</Text>
+        </InfoCard>
         </ScrollView>
         {/* Confirm Button always visible at bottom */}
         <AppButton onPress={() => alert('Appointment Confirmed')} style={styles.confirmBtn}>
