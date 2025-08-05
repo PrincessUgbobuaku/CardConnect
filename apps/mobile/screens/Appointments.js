@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, Platform } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Platform, ScrollView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import DateTimePicker from '@react-native-community/datetimepicker';
 // ...existing code...
 import { Card } from 'react-native-paper';
@@ -29,55 +30,58 @@ export default function CardAppointmentScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <ScreenHeader text="Card Appointment" />
-      <Text style={styles.subheading}>Schedule an appointment to get your physical card</Text>
+      <View style={{ flex: 1 }}>
+        <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
+          {/* Header */}
+          <ScreenHeader text="Card Appointment" />
+          <Text style={styles.subheading}>Schedule an appointment to get your physical card</Text>
 
-      {/* Date Picker */}
-      <Text style={styles.step}>Step 1: Select a date</Text>
-      <TouchableOpacity style={styles.dateBox} onPress={() => setShowDatePicker(true)}>
-        <Text style={styles.dateText}>{formatDate(date)}</Text>
-      </TouchableOpacity>
-      {showDatePicker && (
-  <DateTimePicker
-    value={date}
-    mode="date"
-    display="default"
-    onChange={handleDateChange}
-  />
-)}
-
-      {/* Time Slot Selection */}
-      <Text style={styles.step}>Step 2: Select a time</Text>
-      <View style={styles.timeContainer}>
-        {timeSlots.map((time) => (
-          <TouchableOpacity
-            key={time}
-            style={[styles.timeSlot, selectedTime === time && styles.selectedTime]}
-            onPress={() => setSelectedTime(time)}
-          >
-            <Text style={[styles.timeText, selectedTime === time && styles.selectedTimeText]}>
-              {time}
-            </Text>
+          {/* Date Picker */}
+          <Text style={styles.step}>Step 1: Select a date</Text>
+          <TouchableOpacity style={styles.dateBox} onPress={() => setShowDatePicker(true)}>
+            <Text style={styles.dateText}>{formatDate(date)}</Text>
           </TouchableOpacity>
-        ))}
+          {showDatePicker && (
+            <DateTimePicker
+              value={date}
+              mode="date"
+              display="default"
+              onChange={handleDateChange}
+            />
+          )}
+
+          {/* Time Slot Selection */}
+          <Text style={styles.step}>Step 2: Select a time</Text>
+          <View style={styles.timeContainer}>
+            {timeSlots.map((time) => (
+              <TouchableOpacity
+                key={time}
+                style={[styles.timeSlot, selectedTime === time && styles.selectedTime]}
+                onPress={() => setSelectedTime(time)}
+              >
+                <Text style={[styles.timeText, selectedTime === time && styles.selectedTimeText]}>
+                  {time}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+
+          {/* Preview Booking Card */}
+          <Text style={styles.step}>Step 3: Preview booking details</Text>
+          <Card style={styles.previewCard}>
+            <Card.Content>
+              <Text style={styles.previewText}>Booking details:</Text>
+              <Text>Date: {formatDate(date)}</Text>
+              <Text>Time: {selectedTime}</Text>
+              <Text>Location: Cape Peninsula University of Technology</Text>
+            </Card.Content>
+          </Card>
+        </ScrollView>
+        {/* Confirm Button always visible at bottom */}
+        <AppButton onPress={() => alert('Appointment Confirmed')} style={styles.confirmBtn}>
+          Confirm
+        </AppButton>
       </View>
-
-      {/* Preview Booking Card */}
-      <Text style={styles.step}>Step 3: Preview booking details</Text>
-      <Card style={styles.previewCard}>
-        <Card.Content>
-          <Text style={styles.previewText}>Booking details:</Text>
-          <Text>Date: {formatDate(date)}</Text>
-          <Text>Time: {selectedTime}</Text>
-          <Text>Location: Cape Peninsula University of Technology</Text>
-        </Card.Content>
-      </Card>
-
-      {/* Confirm Button */}
-      <AppButton onPress={() => alert('Appointment Confirmed')} style={styles.confirmBtn}>
-        Confirm
-      </AppButton>
     </SafeAreaView>
   );
 }
