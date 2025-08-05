@@ -5,6 +5,7 @@ import { Card } from 'react-native-paper';
 import { AppButton } from '../components/button'; // Custom button component
 import ScreenHeader from '../components/ScreenHeader'; // Custom header component
 
+import DateTimePicker from '@react-native-community/datetimepicker';
 export default function CardAppointmentScreen() {
   const [date, setDate] = useState(new Date(2024, 8, 14)); // Example default: 14 Sep 2024
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -38,13 +39,13 @@ export default function CardAppointmentScreen() {
         <Text style={styles.dateText}>{formatDate(date)}</Text>
       </TouchableOpacity>
       {showDatePicker && (
-        <DateTimePicker
-          value={date}
-          mode="date"
-          display="default"
-          onChange={handleDateChange}
-        />
-      )}
+  <DateTimePicker
+    value={date}
+    mode="date"
+    display="default"
+    onChange={handleDateChange}
+  />
+)}
 
       {/* Time Slot Selection */}
       <Text style={styles.step}>Step 2: Select a time</Text>
