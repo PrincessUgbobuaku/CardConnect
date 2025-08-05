@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import { View } from "react-native";
+import { View, ScrollView } from "react-native";
 import { TextInput as PaperInput } from "react-native-paper";
 import { Text as PaperText } from "react-native-paper";
 import { StyleSheet, Image } from "react-native";
@@ -7,7 +7,7 @@ import { AppButton } from "../components/button.js";
 
 export default function Welcome({ navigation }) {
   return (
-    <View style={styles.welcomeContainer}>
+    <ScrollView contentContainerStyle={styles.welcomeContainer}>
       <View style={styles.welcomeHeaderContainer}>
         <View style={styles.logoImageContainer}>
           <Image
@@ -44,13 +44,13 @@ export default function Welcome({ navigation }) {
       </PaperText>
       <View style={styles.welcomeButtonContainer}>
         <AppButton
-          style={[{ width: "150" }]}
+          style={[{ width: 150 }]}
           onPress={() => navigation.navigate("SignUp")}
         >
           Sign up
         </AppButton>
         <AppButton
-          style={[{ width: "150" }]}
+          style={[{ width: 150 }]}
           onPress={() => navigation.navigate("Login")}
         >
           Log in
@@ -63,7 +63,7 @@ export default function Welcome({ navigation }) {
           Test Appointment
         </AppButton>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
