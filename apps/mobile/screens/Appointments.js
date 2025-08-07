@@ -3,7 +3,6 @@ import { View, Text, StyleSheet, TouchableOpacity, Platform, ScrollView } from '
 import { SafeAreaView } from 'react-native-safe-area-context';
 import DateTimePicker from '@react-native-community/datetimepicker';
 // ...existing code...
-import { Card } from 'react-native-paper';
 import InfoCard from '../components/InfoCard';
 import { AppButton } from '../components/button'; // Custom button component
 import ScreenHeader from '../components/ScreenHeader'; // Custom header component
