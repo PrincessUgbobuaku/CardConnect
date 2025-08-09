@@ -19,7 +19,7 @@ function App() {
 
       <WebButton
         onClick={() => alert("Custom width!")}
-        style={{ width: "500px" }} // 👈 Set width here
+        style={{ width: "500px" }} // Set width here
       >
         Wider Button
       </WebButton>
