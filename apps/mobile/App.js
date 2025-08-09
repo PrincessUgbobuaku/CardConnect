@@ -11,7 +11,7 @@ import { Provider as PaperProvider, DefaultTheme } from "react-native-paper";
 
 const theme = {
   ...DefaultTheme,
-  roundness: 5,
+  roundness: 10,
 };
 
 const Stack = createNativeStackNavigator();
@@ -24,12 +24,24 @@ export default function App() {
           <NavigationContainer>
             <Stack.Navigator
               initialRouteName="Welcome"
-              screenOptions={{ headerShown: false}}
+              screenOptions={{ headerShown: false }}
             >
               <Stack.Screen name="Welcome" component={Welcome} />
-              <Stack.Screen name="Login" component={Login} options={{title: "Login"}}/>
-              <Stack.Screen name="SignUp" component={SignUp} options={{title: "SignUp"}}/>
-              <Stack.Screen name="Profile" component={Profile} options={{title: "Profile"}}/>
+              <Stack.Screen
+                name="Login"
+                component={Login}
+                options={{ title: "Login" }}
+              />
+              <Stack.Screen
+                name="SignUp"
+                component={SignUp}
+                options={{ title: "SignUp" }}
+              />
+              <Stack.Screen
+                name="Profile"
+                component={Profile}
+                options={{ title: "Profile" }}
+              />
 
               {/* <SafeAreaView style={styles.container}> */}
               {/* <Login /> */}
