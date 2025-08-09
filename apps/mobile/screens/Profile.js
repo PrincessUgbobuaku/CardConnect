@@ -4,7 +4,7 @@ import { ScrollView, View, StyleSheet, Image } from "react-native";
 import { Text, Avatar } from "react-native-paper";
 import InfoCard from "../components/InfoCard";
 import InfoRow from "../components/InfoRow";
-import { AppButton } from "../components/button";
+import { AppButton } from "../components/MobileButton";
 
 export default function Profile() {
   return (
