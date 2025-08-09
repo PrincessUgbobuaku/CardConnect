@@ -3,7 +3,7 @@ import Icon from "react-native-vector-icons/Ionicons";
 import { TextInput as PaperInput } from "react-native-paper";
 import { Button as PaperButton } from "react-native-paper";
 import { Text as PaperText } from "react-native-paper";
-import { AppButton } from "../components/button.js";
+import { AppButton } from "../components/MobileButton.js";
 
 import {
   StyleSheet,
@@ -159,7 +159,6 @@ const styles = StyleSheet.create({
     paddingRight: 35,
     gap: 40,
     marginBottom: 100,
-    
   },
 
   inputText: {
