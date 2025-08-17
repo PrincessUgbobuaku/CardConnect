@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import DateTimePicker from '@react-native-community/datetimepicker';
 // ...existing code...
 import InfoCard from '../components/InfoCard';
-import { AppButton } from '../components/button'; // Custom button component
+import { AppButton } from '../components/MobileButton'; // Custom button component
 import ScreenHeader from '../components/ScreenHeader'; // Custom header component
 
 export default function CardAppointmentScreen() {

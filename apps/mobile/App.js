@@ -4,6 +4,7 @@ import Login from "../mobile/screens/Login.js"; // Adjust the path if needed
 import Welcome from "../mobile/screens/Welcome.js"; // Adjust the path if needed
 import SignUp from "../mobile/screens/SignUp.js"; // Adjust the path if needed
 import Profile from "../mobile/screens/Profile.js"; // Adjust the path if needed
+import Appointments from "../mobile/screens/Appointments.js"; // Adjust the path if needed
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -28,7 +29,7 @@ export default function App() {
               initialRouteName="Welcome"
               screenOptions={{ headerShown: false }}
             >
-              <Stack.Screen name="Welcome" component={Welcome} />
+              <Stack.Screen name="Welcome" component={Appointments} />
               <Stack.Screen
                 name="Login"
                 component={Login}
@@ -43,6 +44,12 @@ export default function App() {
                 name="Profile"
                 component={Profile}
                 options={{ title: "Profile" }}
+              />
+
+              <Stack.Screen
+                name="Appointments"
+                component={Appointments}
+                options={{ title: "Appointments" }}
               />
 
               {/* <SafeAreaView style={styles.container}> */}
