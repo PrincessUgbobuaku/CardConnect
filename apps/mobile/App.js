@@ -9,6 +9,8 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Provider as PaperProvider, DefaultTheme } from "react-native-paper";
 
+import CardAppointmentScreen from "./screens/Appointments.js";
+
 const theme = {
   ...DefaultTheme,
   roundness: 10,
