@@ -2,13 +2,20 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import logo from "../assets/cardconnect-logo.png";
 
-export default function Login() {
+export default function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [acceptPolicy, setAcceptPolicy] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    alert(`Logging in with Email: ${email}`);
+
+    if (!acceptPolicy) {
+      alert("You must accept the Privacy Policy before registering.");
+      return;
+    }
+
+    alert(`Email: ${email}\nPassword: ${password}`);
   };
 
   const containerStyle = {
@@ -52,6 +59,10 @@ export default function Login() {
     fontSize: "14px",
   };
 
+  const checkboxStyle = {
+    marginRight: "8px",
+  };
+
   const buttonStyle = {
     width: "100%",
     padding: "12px",
@@ -89,7 +100,7 @@ export default function Login() {
           }}
         />
         <h1 style={{ fontSize: "28px", marginBottom: "10px" }}>
-          Card Connect Login
+          Card Connect Registration
         </h1>
         <p style={{ fontSize: "16px", opacity: 0.9 }}>Secure Access Portal</p>
       </div>
@@ -97,8 +108,8 @@ export default function Login() {
       {/* Right Side */}
       <div style={rightPanelStyle}>
         <form style={formContainerStyle} onSubmit={handleSubmit}>
-          <h2>Card Connect Login</h2>
-          <p>Enter your credentials to sign in</p>
+          <h2>Card Connect Registration</h2>
+          <p>Please fill in your details to create your account</p>
 
           <input
             type="email"
@@ -118,14 +129,29 @@ export default function Login() {
             required
           />
 
+          <div style={{ marginTop: "10px" }}>
+            <input
+              type="checkbox"
+              style={checkboxStyle}
+              checked={acceptPolicy}
+              onChange={(e) => setAcceptPolicy(e.target.checked)}
+            />
+            <label>
+              I accept the{" "}
+              <a href="#" style={linkStyle}>
+                Privacy Policy
+              </a>
+            </label>
+          </div>
+
           <button type="submit" style={buttonStyle}>
-            Login
+            Create Account
           </button>
 
           <div style={smallTextStyle}>
-            Don't have an account?{" "}
-            <Link to="/signup" style={linkStyle}>
-              Sign up here
+            Already have an account?{" "}
+            <Link to="/login" style={linkStyle}>
+              Sign in here
             </Link>
           </div>
         </form>
