@@ -29,7 +29,7 @@ export default function App() {
               initialRouteName="Welcome"
               screenOptions={{ headerShown: false }}
             >
-              <Stack.Screen name="Welcome" component={Appointments} />
+              <Stack.Screen name="Welcome" component={Login} />
               <Stack.Screen
                 name="Login"
                 component={Login}

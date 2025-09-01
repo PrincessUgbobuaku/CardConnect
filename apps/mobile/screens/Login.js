@@ -1,39 +1,69 @@
 import { StatusBar } from "expo-status-bar";
-import Icon from "react-native-vector-icons/Ionicons";
 import { TextInput as PaperInput } from "react-native-paper";
-import { Button as PaperButton } from "react-native-paper";
 import { Text as PaperText } from "react-native-paper";
 import { AppButton } from "../components/MobileButton.js";
 
-import {
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  Button,
-  TextInput,
-  Pressable,
-  TouchableOpacity,
-} from "react-native";
+import { StyleSheet, Text, View, Image, Alert } from "react-native";
 
 import { useState } from "react";
 
-export default function Login() {
-  const [password, setPassword] = useState(""); //Stores the password typed by the user.
-  const [secureText, setSecureText] = useState(true); // Controls visibility of password (true or false)
+export default function Login({ navigation }) {
+  const [studentNumber, setStudentNumber] = useState(""); // added email/username
+  const [password, setPassword] = useState("");
+  const [secureText, setSecureText] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const handleLogin = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch(
+        "http://192.168.101.108:8080/api/auth/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: studentNumber, // backend expects email
+            password: password,
+          }),
+        }
+      );
+
+      const textResponse = await response.text(); // Read body once
+      let data;
+
+      try {
+        data = JSON.parse(textResponse); // Try to parse as JSON
+      } catch {
+        data = textResponse; // Use raw text if not JSON
+      }
+
+      if (!response.ok) {
+        // Show error message (either from backend or fallback)
+        setError(data?.message || data || "Login failed");
+        setLoading(false);
+        return;
+      }
+
+      setLoading(false);
+
+      // Success logic
+      Alert.alert("Success", "Logged in successfully!");
+      // navigation.navigate('Dashboard'); // optional
+    } catch (err) {
+      setLoading(false);
+      setError("Network error: " + err.message);
+    }
+  };
 
   return (
     <View style={styles.loginContainer}>
       <StatusBar style="dark" />
 
-      {/* top image */}
-      {/* <View style={styles.imageContainer}>
-        <Image
-          source={require("../../assets/blue-background-top.png")}
-          style={styles.topImage}
-          //style={styles.backgroundImage}
-        />
-      </View> */}
       <View style={styles.loginHeaderContainer}>
         <View style={styles.logoImageContainer}>
           <Image
@@ -50,7 +80,7 @@ export default function Login() {
           <PaperText>Secure Access Portal</PaperText>
         </View>
       </View>
-      {/* input fields */}
+
       <View style={styles.inputContainer}>
         <PaperInput
           label="Student number"
@@ -60,28 +90,42 @@ export default function Login() {
           theme={{ colors: { primary: "#145DA0" } }}
           selectionColor="orange"
           cursorColor="orange"
+          value={studentNumber}
+          onChangeText={(text) => setStudentNumber(text)}
         />
         <PaperInput
           label="Password"
           placeholder="Enter your password"
           mode="outlined"
           style={styles.inputText}
-          // theme={{ colors: { primary: "#145DA0" } }}
           onChangeText={(text) => setPassword(text)}
-          secureTextEntry={secureText} // Hides/shows text
+          secureTextEntry={secureText}
           right={
             <PaperInput.Icon
-              icon={secureText ? "eye-off" : "eye"} //icon switches
-              onPress={() => setSecureText(!secureText)} // Toggle visibility
+              icon={secureText ? "eye-off" : "eye"}
+              onPress={() => setSecureText(!secureText)}
             />
           }
           selectionColor="orange"
           cursorColor="orange"
+          value={password}
         />
       </View>
 
+      {error && (
+        <Text style={{ color: "red", textAlign: "center", marginBottom: 10 }}>
+          {error}
+        </Text>
+      )}
+
       <View style={styles.buttonContainer}>
-        <AppButton style={[{ width: "150" }]}>Login</AppButton>
+        <AppButton
+          onPress={handleLogin}
+          disabled={loading}
+          style={{ width: 150 }}
+        >
+          {loading ? "Logging in..." : "Login"}
+        </AppButton>
       </View>
 
       <View style={styles.forgotPasswordContainer}>
@@ -92,34 +136,18 @@ export default function Login() {
           </PaperText>
         </PaperText>
       </View>
-
-      {/* <View style={styles.imageContainer}>
-        <Image
-          source={require("../../assets/blue-background-bottom.png")}
-          style={styles.bottomImage}
-        />
-      </View> */}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  // ... your existing styles here ...
   loginContainer: {
     flex: 1,
     backgroundColor: "#F5F2F2",
     width: "100%",
     flexDirection: "column",
   },
-
-  // imageContainer: {
-  //   width: "100%",
-  //   marginBottom: 50,
-  // },
-
-  // topImage: {
-  //   width: "100%",
-  //   height: 150,
-  // },
 
   loginHeaderContainer: {
     paddingTop: 60,
@@ -129,21 +157,19 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#145DA0",
     gap: 20,
-    borderBottomLeftRadius: 250, // 👈 add this
+    borderBottomLeftRadius: 250,
     borderBottomRightRadius: 250,
-    width: 600, // 👈 add this
-    alignSelf: "center", // 👈 add this
+    width: 600,
+    alignSelf: "center",
     marginBottom: 80,
   },
 
-  logoImageContainer: {
-    // alignItems: "center",
-  },
+  logoImageContainer: {},
 
   logoImage: {
-    width: 100, // your desired width
-    height: 100, // your desired height
-    resizeMode: "contain", // optional to keep aspect ratio
+    width: 100,
+    height: 100,
+    resizeMode: "contain",
   },
 
   loginText: {
@@ -164,12 +190,6 @@ const styles = StyleSheet.create({
   inputText: {
     paddingLeft: 10,
     fontStyle: "normal",
-    // borderRadius: 0,
-  },
-
-  eyeIcon: {
-    marginRight: 20,
-    marginTop: 10,
   },
 
   buttonContainer: {
@@ -178,8 +198,8 @@ const styles = StyleSheet.create({
   },
 
   forgotPasswordContainer: {
-    alignItems: "center", // centers horizontally
-    justifyContent: "center", // centers vertically if needed
+    alignItems: "center",
+    justifyContent: "center",
   },
 
   forgotPassword: {

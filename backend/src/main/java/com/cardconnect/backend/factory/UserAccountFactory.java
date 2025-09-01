@@ -1,0 +1,35 @@
+package com.cardconnect.backend.factory;
+
+import com.cardconnect.backend.domain.User;
+import com.cardconnect.backend.domain.UserAccount;
+import com.cardconnect.backend.util.Helper;
+
+public class UserAccountFactory {
+
+    /**
+     * Creates a UserAccount with the given email, passwordHash, and user.
+     * Validates the email and user, but expects password to be already hashed.
+     *
+     * @param email        user email
+     * @param passwordHash hashed password (already hashed in service)
+     * @param user         associated User object
+     * @return UserAccount or null if validation fails
+     */
+    public static UserAccount createUserAccount(String email, String passwordHash, User user) {
+        if (!Helper.isInstitutionEmail(email)
+                || passwordHash == null || passwordHash.isEmpty()
+                || user == null) {
+            System.out.println("❌ UserAccountFactory validation failed");
+            return null;
+        }
+
+        String accountId = Helper.generateID();
+
+        return new UserAccount.Builder()
+                .setAccountId(accountId)
+                .setEmail(email)
+                .setPasswordHash(passwordHash)
+                .setUser(user)
+                .build();
+    }
+}
