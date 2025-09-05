@@ -60,13 +60,13 @@ export default function Welcome({ navigation }) {
           >
             Log in
           </AppButton>
-          {/* ✅ Appointment Button */}
+          {/* ✅ Appointment Button
           <AppButton
             style={[{ width: 150 }]}
             onPress={() => navigation.navigate("CardAppointment")}
           >
             Test Appointment
-          </AppButton>
+          </AppButton> */}
         </View>
       </View>
     </SafeAreaView>

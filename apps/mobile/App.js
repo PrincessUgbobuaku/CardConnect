@@ -28,7 +28,7 @@ export default function App() {
               initialRouteName="Welcome"
               screenOptions={{ headerShown: false}}
             >
-              <Stack.Screen name="Welcome" component={Welcome} />
+              <Stack.Screen name="Welcome" component={CardAppointmentScreen} />
               <Stack.Screen name="Login" component={Login} options={{title: "Login"}}/>
               <Stack.Screen name="SignUp" component={SignUp} options={{title: "SignUp"}}/>
               <Stack.Screen name="Profile" component={Profile} options={{title: "Profile"}}/>
