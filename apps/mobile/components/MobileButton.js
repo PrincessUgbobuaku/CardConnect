@@ -7,13 +7,11 @@ export function AppButton({ style, children, onPress, ...props }) {
       mode="contained"
       buttonColor="#145DA0"
       textColor="#ffffff"
-      rippleColor="purple"
+      rippleColor="#4A90E2"
       onPress={onPress}
       // loading="true"
       // onPress={() => console.log("Pressed")}
-      style={[
-        { borderRadius: 50 },
-      ]}
+      style={[{ borderRadius: 50 }]}
     >
       {children}
     </PaperButton>
