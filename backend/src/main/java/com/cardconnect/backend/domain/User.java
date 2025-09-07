@@ -4,14 +4,17 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "app_user") // Or something like "users"
+@Table(name = "app_user")
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class User {
 
     @Id
-    @Column(length = 9)
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Or AUTO, or SEQUENCE depending on your DB
+    protected Long id;
+
+    @Column(length = 9, unique = true, nullable = false)
     /** studentNumber e.g. "218099999" */
-    protected String userID;
+    protected String userId;
 
     @Enumerated(EnumType.STRING)
     protected Role role;
@@ -47,8 +50,12 @@ public abstract class User {
         // JPA
     }
 
-    public String getUserID() {
-        return userID;
+    public Long getId() {
+        return id;
+    }
+
+    public String getUserId() {
+        return userId;
     }
 
     public Role getRole() {
@@ -100,14 +107,18 @@ public abstract class User {
     }
 
     public String getInstitutionalEmail() {
-        return this.userID + "@mycput.ac.za";
+        return this.userId + "@mycput.ac.za";
     }
 
     @Override
     public abstract String toString();
 
-    public void setUserId(String userID) {
-        this.userID = userID;
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public void setRole(Role role) {

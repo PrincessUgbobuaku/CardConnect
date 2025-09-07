@@ -116,12 +116,13 @@ const styles = StyleSheet.create({
   welcomeText: {
     textAlign: "center",
     marginTop: 40,
-    marginBottom: 40,
+    // marginBottom: 0,
   },
 
   welcomeButtonContainer: {
     flexDirection: "row",
     justifyContent: "center",
     gap: 30,
+    marginBottom: 60
   },
 });

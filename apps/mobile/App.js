@@ -9,8 +9,9 @@ import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Provider as PaperProvider, DefaultTheme } from "react-native-paper";
-
+import CreatePassword from "./screens/CreatePassword.js";
 import CardAppointmentScreen from "./screens/Appointments.js";
+import EditProfile from "./screens/EditProfile.js";
 
 const theme = {
   ...DefaultTheme,
@@ -29,7 +30,7 @@ export default function App() {
               initialRouteName="Welcome"
               screenOptions={{ headerShown: false }}
             >
-              <Stack.Screen name="Welcome" component={Login} />
+              <Stack.Screen name="Welcome" component={Welcome} />
               <Stack.Screen
                 name="Login"
                 component={Login}
@@ -44,6 +45,14 @@ export default function App() {
                 name="Profile"
                 component={Profile}
                 options={{ title: "Profile" }}
+              />
+
+              <Stack.Screen name="EditProfile" component={EditProfile} />
+
+              <Stack.Screen
+                name="CreatePassword"
+                component={CreatePassword}
+                options={{ title: "CreatePassword" }}
               />
 
               <Stack.Screen

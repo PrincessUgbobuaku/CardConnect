@@ -10,10 +10,15 @@ import java.time.LocalDate;
 public class StudentFactory {
 
     /**
-     * Creates a Student with the given parameters.
-     * Expects userID (student number) to be passed from outside.
+     * Creates a new Student domain object using validated input.
+     * 
+     * Sets fixed attributes like the Role.STUDENT.
+     * 
+     * Prevents invalid student objects from being built.
      */
+
     public static Student createStudent(
+            String userId, // Now passed in
             String firstName,
             String lastName,
             // String email,
@@ -31,17 +36,17 @@ public class StudentFactory {
             int yearOfStudy) {
 
         // Generate userID based on DOB
-        String userID = Helper.generateUserID(dateOfBirth);
+        // String userID = Helper.generateUserID(dateOfBirth);
 
         // Validate userID (student number) explicitly
-        if (!Helper.isValidUserID(userID)) {
-            System.out.println("Invalid userID: " + userID);
+        if (!Helper.isValidUserID(userId)) {
+            System.out.println("Invalid userID: " + userId);
             return null;
         }
 
-        // ✅ Debug validation checks
+        // Debug validation checks
         System.out.println("Validation Debug:");
-        System.out.println("User ID valid: " + Helper.isValidUserID(userID));
+        System.out.println("User ID valid: " + Helper.isValidUserID(userId));
         System.out.println("First name valid: " + Helper.isValidString(firstName));
         System.out.println("Last name valid: " + Helper.isValidString(lastName));
         // System.out.println("Email valid: " + Helper.isValidEmail(email));
@@ -57,8 +62,8 @@ public class StudentFactory {
         System.out.println("School valid: " + Helper.isNotEmpty(school));
         System.out.println("Year of study valid: " + (yearOfStudy > 0));
 
-        // ❌ If any validation fails, return null
-        if (!Helper.isValidUserID(userID)
+        // If any validation fails, return null
+        if (!Helper.isValidUserID(userId)
                 || !Helper.isValidString(firstName)
                 || !Helper.isValidString(lastName)
                 // || !Helper.isValidEmail(email)
@@ -79,8 +84,8 @@ public class StudentFactory {
 
         // ✅ Build the student with passed userID
         Student student = new Student.Builder()
-                .setUserID(userID)
-                .setRole(Role.ROLE_STUDENT) // ✅ Set role
+                .setUserId(userId)
+                .setRole(Role.ROLE_STUDENT) // Set role
                 .setFirstName(firstName)
                 .setLastName(lastName)
                 // .setEmail(email)
@@ -98,8 +103,8 @@ public class StudentFactory {
                 .setYearOfStudy(yearOfStudy)
                 .build();
 
-        // ✅ Print the result
-        System.out.println("Created Student: " + student);
+        // Print the result
+        System.out.println("Created Student - Factory: " + student);
 
         return student;
     }

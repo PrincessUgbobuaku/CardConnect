@@ -8,8 +8,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-import static org.springframework.security.config.Customizer.withDefaults;
-
 @Configuration
 public class SecurityConfig {
 
@@ -18,18 +16,19 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(csrf -> csrf.disable()) // Disable CSRF (mostly for testing / APIs)
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll() // Allow auth-related routes
-                        .anyRequest().authenticated() // Protect everything else
-                )
-                .httpBasic(withDefaults()) // Still enable basic auth for protected routes
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+    // @Bean
+    // public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    //     http
+    //             .csrf(csrf -> csrf.disable()) // Disable CSRF for APIs
+    //             .authorizeHttpRequests(auth -> auth
+    //                     .requestMatchers("/api/auth/**").permitAll() // Allow auth endpoints
+    //                     .anyRequest().authenticated() // Secure all other endpoints
+    //             )
+    //             .sessionManagement(session -> session
+    //                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+    //             .httpBasic(httpBasic -> {
+    //             }); // Disable popup but allow programmatic Basic Auth (optional)
 
-        return http.build();
-    }
+    //     return http.build();
+    // }
 }

@@ -1,7 +1,7 @@
 package com.cardconnect.backend.domain;
+import java.time.LocalDate;
 
 import jakarta.persistence.Entity;
-import java.time.LocalDate;
 
 @Entity
 public class Student extends User {
@@ -16,13 +16,11 @@ public class Student extends User {
     }
 
     private Student(Builder builder) {
-        this.userID = builder.userID;
+        this.id = builder.id;  // Set inherited id here
+        this.userId = builder.userId;
         this.role = builder.role;
-
         this.firstName = builder.firstName;
         this.lastName = builder.lastName;
-        // this.email = builder.email;
-        // this.password = builder.password;
         this.contactNumber = builder.contactNumber;
         this.gender = builder.gender;
         this.dateOfBirth = builder.dateOfBirth;
@@ -30,58 +28,53 @@ public class Student extends User {
         this.identificationNumber = builder.identificationNumber;
         this.agreedToTerms = builder.agreedToTerms;
         this.profilePhoto = builder.profilePhoto;
-
         this.department = builder.department;
         this.degree = builder.degree;
         this.school = builder.school;
         this.yearOfStudy = builder.yearOfStudy;
     }
 
+    // Getters and setters for Student-specific fields
+
     public String getDepartment() {
         return department;
+    }
+
+    public void setDepartment(String department) {
+        this.department = department;
     }
 
     public String getDegree() {
         return degree;
     }
 
+    public void setDegree(String degree) {
+        this.degree = degree;
+    }
+
     public String getSchool() {
         return school;
+    }
+
+    public void setSchool(String school) {
+        this.school = school;
     }
 
     public int getYearOfStudy() {
         return yearOfStudy;
     }
 
-
-    @Override
-    public String toString() {
-        return "Student{" +
-                "userID='" + userID + '\'' +
-                ", role='" + role + '\'' + // ✅ Add this
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                // ", email='" + email + '\'' +
-                ", contactNumber='" + contactNumber + '\'' +
-                ", gender=" + gender +
-                ", dateOfBirth=" + dateOfBirth +
-                ", idType=" + idType +
-                ", identificationNumber='" + identificationNumber + '\'' +
-                ", department='" + department + '\'' +
-                ", degree='" + degree + '\'' +
-                ", school='" + school + '\'' +
-                ", yearOfStudy=" + yearOfStudy +
-                ", agreedToTerms=" + agreedToTerms +
-                '}';
+    public void setYearOfStudy(int yearOfStudy) {
+        this.yearOfStudy = yearOfStudy;
     }
 
+    // Builder class
     public static class Builder {
-        private String userID;
+        private Long id;
+        private String userId;
         private Role role;
         private String firstName;
         private String lastName;
-        // private String email;
-        // private String password;
         private String contactNumber;
         private char gender;
         private LocalDate dateOfBirth;
@@ -95,8 +88,13 @@ public class Student extends User {
         private String school;
         private int yearOfStudy;
 
-        public Builder setUserID(String userID) {
-            this.userID = userID;
+        public Builder setId(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder setUserId(String userId) {
+            this.userId = userId;
             return this;
         }
 
@@ -114,16 +112,6 @@ public class Student extends User {
             this.lastName = lastName;
             return this;
         }
-
-        // public Builder setEmail(String email) {
-        // this.email = email;
-        // return this;
-        // }
-
-        // public Builder setPassword(String password) {
-        // this.password = password;
-        // return this;
-        // }
 
         public Builder setContactNumber(String contactNumber) {
             this.contactNumber = contactNumber;
@@ -181,29 +169,41 @@ public class Student extends User {
         }
 
         public Builder copy(Student student) {
-            this.userID = student.userID;
-            this.role = student.role;
-            this.firstName = student.firstName;
-            this.lastName = student.lastName;
-            // this.email = student.email;
-            // this.password = student.password;
-            this.contactNumber = student.contactNumber;
-            this.gender = student.gender;
-            this.dateOfBirth = student.dateOfBirth;
-            this.idType = student.idType;
-            this.identificationNumber = student.identificationNumber;
-            this.agreedToTerms = student.agreedToTerms;
-            this.profilePhoto = student.profilePhoto;
-
-            this.department = student.department;
-            this.degree = student.degree;
-            this.school = student.school;
-            this.yearOfStudy = student.yearOfStudy;
+            this.id = student.getId();
+            this.userId = student.getUserId();
+            this.role = student.getRole();
+            this.firstName = student.getFirstName();
+            this.lastName = student.getLastName();
+            this.contactNumber = student.getContactNumber();
+            this.gender = student.getGender();
+            this.dateOfBirth = student.getDateOfBirth();
+            this.idType = student.getIdType();
+            this.identificationNumber = student.getIdentificationNumber();
+            this.agreedToTerms = student.isAgreedToTerms();
+            this.profilePhoto = student.getProfilePhoto();
+            this.department = student.getDepartment();
+            this.degree = student.getDegree();
+            this.school = student.getSchool();
+            this.yearOfStudy = student.getYearOfStudy();
             return this;
         }
 
         public Student build() {
             return new Student(this);
         }
+    }
+
+    @Override
+    public String toString() {
+        return "Student{" +
+                "id=" + id +
+                ", userId='" + userId + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", department='" + department + '\'' +
+                ", degree='" + degree + '\'' +
+                ", school='" + school + '\'' +
+                ", yearOfStudy=" + yearOfStudy +
+                '}';
     }
 }

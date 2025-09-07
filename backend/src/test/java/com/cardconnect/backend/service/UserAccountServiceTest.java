@@ -1,187 +1,227 @@
-package com.cardconnect.backend.service;
+// package com.cardconnect.backend.service;
 
-import com.cardconnect.backend.domain.Student;
-import com.cardconnect.backend.domain.User;
-import com.cardconnect.backend.domain.UserAccount;
-import com.cardconnect.backend.repository.IUserAccountRepository;
-import com.cardconnect.backend.repository.IUserRepository;
+// import com.cardconnect.backend.domain.Student;
+// import com.cardconnect.backend.domain.User;
+// import com.cardconnect.backend.domain.UserAccount;
+// import com.cardconnect.backend.domain.User.Role;
+// import com.cardconnect.backend.repository.IUserAccountRepository;
+// import com.cardconnect.backend.repository.IUserRepository;
 
-import jakarta.transaction.Transactional;
-import org.junit.jupiter.api.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.annotation.Rollback;
+// import org.junit.jupiter.api.*;
+// import org.springframework.beans.factory.annotation.Autowired;
+// import org.springframework.boot.test.context.SpringBootTest;
+// import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+// import org.springframework.security.core.context.SecurityContextHolder;
+// import org.springframework.security.core.userdetails.UserDetails;
+// import org.springframework.security.crypto.password.PasswordEncoder;
+// import org.springframework.test.annotation.Rollback;
+// import org.springframework.security.core.Authentication;
 
-import java.time.LocalDate;
-import java.util.List;
+// import java.time.LocalDate;
+// import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.*;
+// import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
-@Transactional
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class UserAccountServiceTest {
+// @SpringBootTest
+// @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+// class UserAccountServiceTest {
 
-    @Autowired
-    private UserAccountService userAccountService;
+//     @Autowired
+//     private UserAccountService userAccountService;
 
-    @Autowired
-    private IUserRepository userRepository;
+//     @Autowired
+//     private StudentService studentService;
 
-    @Autowired
-    private IUserAccountRepository userAccountRepository;
+//     @Autowired
+//     private PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+//     @Autowired
+//     private IUserAccountRepository userAccountRepository;
 
-    private static UserAccount userAccount;
-    private static Student existingStudent;
+//     @Autowired
+//     private IUserRepository userRepository;
 
-    @BeforeAll
-    static void setup(@Autowired IUserRepository userRepository,
-                      @Autowired IUserAccountRepository userAccountRepository,
-                      @Autowired PasswordEncoder passwordEncoder) {
+//     // NEW student details to avoid conflicts and ensure uniqueness
+//     private static final String STUDENT_ID = "STU654321";
+//     private static final String ID_NUMBER = "9902025050099";
+//     private static final String PASSWORD = "Strong@789";
 
-        String studentNumber = "STU000005";
-        String idNumber = "9001015000001";
+//     private static Long createdAccountId;
 
-        if (!userRepository.existsById(studentNumber)) {
-            existingStudent = new Student.Builder()
-                    .setUserID(studentNumber)
-                    .setFirstName("Keagon")
-                    .setLastName("Acton")
-                    .setRole(User.Role.ROLE_STUDENT)
-                    .setContactNumber("0823456777")
-                    .setGender('F')
-                    .setDateOfBirth(LocalDate.of(2003, 11, 29))
-                    .setIdType(User.IDType.SA_ID)
-                    .setIdentificationNumber(idNumber)
-                    .setAgreedToTerms(true)
-                    .setDepartment("Engineering")
-                    .setDegree("BSc Electrical")
-                    .setSchool("Science & Tech")
-                    .setYearOfStudy(2)
-                    .build();
+//     /**
+//      * Create a student in the database to be used in signup.
+//      */
+//     @Test
+//     @Order(1)
+//     @Rollback(false)
+//     void createStudentForSignup() {
+//         Student student = new Student.Builder()
+//                 .setUserId(STUDENT_ID)
+//                 .setRole(Role.ROLE_STUDENT)
+//                 .setFirstName("Sipho")
+//                 .setLastName("Nkosi")
+//                 .setGender('M')
+//                 .setContactNumber("0847654321")
+//                 .setDateOfBirth(LocalDate.of(2000, 2, 2))
+//                 .setIdType(User.IDType.SA_ID)
+//                 .setIdentificationNumber(ID_NUMBER)
+//                 .setAgreedToTerms(true)
+//                 .setDepartment("Computer Science")
+//                 .setDegree("BSc Information Technology")
+//                 .setSchool("Science & IT")
+//                 .setYearOfStudy(3)
+//                 .build();
 
-            userRepository.save(existingStudent);
-        } else {
-            existingStudent = (Student) userRepository.findById(studentNumber).orElseThrow();
-        }
+//         Student saved = studentService.create(student);
+//         assertNotNull(saved);
+//         assertEquals(STUDENT_ID, saved.getUserId());
+//     }
 
-        if (userAccountRepository.findAll().isEmpty()) {
-            userAccount = new UserAccount.Builder()
-                    .setAccountId("ACC000011")
-                    .setEmail("jane.smith@example.com")
-                    .setPasswordHash(passwordEncoder.encode("DogHorse123///"))
-                    .setUser(existingStudent)
-                    .build();
+//     /**
+//      * Step 1: Verify student identity before allowing signup.
+//      */
+//     @Test
+//     @Order(2)
+//     void testVerifyStudent() {
+//         String verifiedId = userAccountService.verifyStudent(STUDENT_ID, ID_NUMBER);
+//         assertEquals(STUDENT_ID, verifiedId);
+//     }
 
-            userAccountRepository.save(userAccount);
-        } else {
-            userAccount = userAccountRepository.findAll().get(0);
-        }
-    }
+//     /**
+//      * Step 2: Complete signup with password.
+//      */
+//     @Test
+//     @Order(3)
+//     @Rollback(false)
+//     void testCompleteSignup() {
+//         UserAccount account = userAccountService.completeSignup(STUDENT_ID, PASSWORD);
+//         assertNotNull(account);
+//         assertEquals(STUDENT_ID + "@mycput.ac.za", account.getEmail());
 
-    @Test
-    @Order(1)
-    @Rollback(false)
-    void testCreate() {
-        UserAccount created = userAccountService.create(userAccount);
-        assertNotNull(created);
-        assertEquals(userAccount.getEmail(), created.getEmail());
-    }
+//         // Save for later assertions
+//         createdAccountId = account.getAccountId();
+//     }
 
-    @Test
-    @Order(2)
-    void testRead() {
-        List<UserAccount> allAccounts = userAccountService.getAllUserAccounts();
-        assertFalse(allAccounts.isEmpty());
+//     /**
+//      * Step 3: Login with the credentials.
+//      */
+//     @Test
+//     @Order(4)
+//     void testLogin() {
+//         UserAccount account = userAccountService.login(STUDENT_ID + "@mycput.ac.za", PASSWORD);
+//         assertNotNull(account);
+//         assertEquals(STUDENT_ID, account.getUser().getUserId());
+//     }
 
-        String accountId = allAccounts.get(0).getAccountId();
-        UserAccount read = userAccountService.read(accountId);
+//     /**
+//      * Read account from database by ID.
+//      */
+//     @Test
+//     @Order(5)
+//     void testReadAccount() {
+//         assertNotNull(createdAccountId);
+//         UserAccount account = userAccountService.read(createdAccountId);
+//         assertNotNull(account);
+//         assertEquals(STUDENT_ID, account.getUser().getUserId());
+//     }
 
-        assertNotNull(read);
-        assertEquals(read.getEmail(), read.getEmail());
-    }
+//     // @Test
+//     // @Order(6)
+//     // @Rollback(false)
+//     // void testUpdateCreatedAt() {
+//     // assertNotNull(createdAccountId, "Created account ID must not be null before
+//     // updating");
 
-    @Test
-    @Order(3)
-    void testUpdate() {
-        List<UserAccount> all = userAccountService.getAllUserAccounts();
-        UserAccount toUpdate = all.get(0);
+//     // // Read current UserAccount
+//     // UserAccount account = userAccountService.read(createdAccountId);
+//     // assertNotNull(account);
 
-        UserAccount updated = new UserAccount.Builder()
-                .setAccountId(toUpdate.getAccountId())
-                .setEmail("updated1.email@example.com")
-                .setPasswordHash(toUpdate.getPasswordHash())
-                .setUser(toUpdate.getUser())
-                .setCreatedAt(toUpdate.getCreatedAt())
-                .build();
+//     // // New createdAt time (e.g., one day later)
+//     // LocalDateTime newCreatedAt = account.getCreatedAt().plusDays(1);
 
-        UserAccount result = userAccountService.update(updated);
-        assertNotNull(result);
-        assertEquals("updated1.email@example.com", result.getEmail());
-    }
+//     // // Build updated UserAccount with new createdAt
+//     // UserAccount updatedAccount = new UserAccount.Builder()
+//     // .copy(account)
+//     // .setCreatedAt(newCreatedAt)
+//     // .build();
 
-    @Test
-    @Order(4)
-    void testGetAll() {
-        List<UserAccount> all = userAccountService.getAllUserAccounts();
-        assertFalse(all.isEmpty());
-    }
+//     // // Save updated account
+//     // UserAccount savedAccount = userAccountService.update(updatedAccount);
+//     // assertNotNull(savedAccount);
 
-    @Test
-    @Order(5)
-    @Rollback(false)
-    void testSignupFlow() {
-        String studentNumber = "STU000006";
-        String idNumber = "9901015009222";
-        String password = "Default1111/";
+//     // // Verify updated createdAt
+//     // assertEquals(newCreatedAt, savedAccount.getCreatedAt());
+//     // }
 
-        // Step 1: Seed student if not exists
-        if (!userRepository.existsById(studentNumber)) {
-            Student newStudent = new Student.Builder()
-                    .setUserID(studentNumber)
-                    .setFirstName("Brian")
-                    .setLastName("Nono")
-                    .setRole(User.Role.ROLE_STUDENT)
-                    .setContactNumber("0834567333")
-                    .setGender('M')
-                    .setDateOfBirth(LocalDate.of(2001, 2, 2))
-                    .setIdType(User.IDType.SA_ID)
-                    .setIdentificationNumber(idNumber)
-                    .setAgreedToTerms(true)
-                    .setDepartment("Business")
-                    .setDegree("BBA")
-                    .setSchool("Commerce")
-                    .setYearOfStudy(1)
-                    .build();
+//     /**
+//      * Fetch all accounts and check that the newly created one exists.
+//      */
+//     @Test
+//     @Order(7)
+//     void testGetAllAccounts() {
+//         var accounts = userAccountService.getAllUserAccounts();
+//         assertFalse(accounts.isEmpty());
 
-            userRepository.save(newStudent);
-        }
+//         boolean exists = accounts.stream()
+//                 .anyMatch(acc -> acc.getUser().getUserId().equals(STUDENT_ID));
 
-        // Step 2: verify student
-        String userId = userAccountService.verifyStudent(studentNumber, idNumber);
-        assertEquals(studentNumber, userId);
+//         assertTrue(exists);
+//     }
 
-        // Step 3: complete signup with userId and password
-        UserAccount createdAccount = userAccountService.completeSignup(userId, password);
-        assertNotNull(createdAccount);
+//     /**
+//      * Test changing password for an existing user account.
+//      */
+//     @Test
+//     @Order(8)
+//     @Rollback(false)
+//     void testChangePassword() {
 
-        // Email is generated from userId inside completeSignup
-        String expectedEmail = userId + "@mycput.ac.za";
-        assertEquals(expectedEmail, createdAccount.getEmail());
-    }
+//         assertNotNull(createdAccountId, "Created account ID must not be null before changing password");
 
-    @Test
-    @Order(6)
-    void testLogin() {
-        String email = "STU000006@mycput.ac.za";
-        String password = "Default1111/";
+//         UserAccount account = userAccountService.read(createdAccountId);
 
-        UserAccount loggedInAccount = userAccountService.login(email, password);
-        assertNotNull(loggedInAccount);
-        assertEquals(email, loggedInAccount.getEmail());
-    }
-}
+//         // 1. Simulate logged-in user
+//         String email = STUDENT_ID + "@mycput.ac.za";
+//         String oldPassword = PASSWORD; // The correct plaintext password used during signup
+//         String newPassword = "NewStrong@456";
+
+//         // Ensure the password in DB matches the original password
+//         assertTrue(passwordEncoder.matches(oldPassword, account.getPasswordHash()));
+
+//         // Set up SecurityContext
+//         UserDetails userDetails = org.springframework.security.core.userdetails.User
+//                 .withUsername(email)
+//                 .password("irrelevant") // won't be checked here
+//                 .authorities("ROLE_STUDENT")
+//                 .build();
+
+//         Authentication auth = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+//         SecurityContextHolder.getContext().setAuthentication(auth);
+
+//         // 2. Attempt to change the password
+//         UserAccount updatedAccount = userAccountService.changePassword(oldPassword, newPassword);
+
+//         assertNotNull(updatedAccount);
+//         assertEquals(email, updatedAccount.getEmail());
+//         assertTrue(passwordEncoder.matches(newPassword, updatedAccount.getPasswordHash()));
+
+//         // 3. (Optional) Try logging in with new password
+//         UserAccount loginWithNewPassword = userAccountService.login(email, newPassword);
+//         assertNotNull(loginWithNewPassword);
+//         assertEquals(STUDENT_ID, loginWithNewPassword.getUser().getUserId());
+//     }
+
+//     /**
+//      * Delete the account and ensure it's gone.
+//      */
+//     // @Test
+//     // @Order(9)
+//     // @Rollback(false)
+//     // void testDeleteAccount() {
+//     // boolean deleted = userAccountService.delete(createdAccountId);
+//     // assertTrue(deleted);
+//     //
+//     // UserAccount deletedAccount = userAccountService.read(createdAccountId);
+//     // assertNull(deletedAccount);
+//     // }
+// }

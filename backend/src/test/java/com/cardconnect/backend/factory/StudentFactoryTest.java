@@ -13,6 +13,7 @@ class StudentFactoryTest {
     @Test
     void createStudent_WithValidInput_ShouldCreateStudent() {
         Student student = StudentFactory.createStudent(
+                "STU000001", // Passing a valid userID for testing
                 "John",
                 "Doe",
                 "0123456789",
@@ -27,15 +28,20 @@ class StudentFactoryTest {
                 "University of Test",
                 3);
 
-        System.out.println("Created Student:");
-        System.out.println("UserID: " + student.getUserID());
-        System.out.println("First Name: " + student.getFirstName());
-        System.out.println("Last Name: " + student.getLastName());
-        System.out.println("Gender: " + student.getGender());
-        System.out.println("Date of Birth: " + student.getDateOfBirth());
-        System.out.println("ID Type: " + student.getIdType());
-        System.out.println("Department: " + student.getDepartment());
-        System.out.println("Year of Study: " + student.getYearOfStudy());
+        // System.out.println("Created Student:");
+        // System.out.println("UserID: " + student.getUserId());
+        // System.out.println("First Name: " + student.getFirstName());
+        // System.out.println("Last Name: " + student.getLastName());
+        // System.out.println("Identification number: " +
+        // student.getIdentificationNumber());
+        // System.out.println("Agreed to terms?: " + student.isAgreedToTerms());
+        // System.out.println("Gender: " + student.getGender());
+        // System.out.println("Date of Birth: " + student.getDateOfBirth());
+        // System.out.println("ID Type: " + student.getIdType());
+        // System.out.println("Department: " + student.getDepartment());
+        // System.out.println("Year of Study: " + student.getYearOfStudy());
+
+        System.out.println("Created student - Test: " + student);
 
         assertNotNull(student, "Student should not be null with valid input");
         assertEquals("John", student.getFirstName());
@@ -44,13 +50,14 @@ class StudentFactoryTest {
         assertEquals(IDType.PASSPORT, student.getIdType());
         assertEquals("Computer Science", student.getDepartment());
         assertTrue(student.isAgreedToTerms());
-        assertNotNull(student.getUserID());
-        assertEquals(9, student.getUserID().length(), "UserID length should be 9");
+        assertNotNull(student.getUserId());
+        assertEquals(9, student.getUserId().length(), "UserID length should be 9");
     }
 
     @Test
     void createStudent_WithEmptyFirstName_ShouldReturnNull() {
         Student student = StudentFactory.createStudent(
+                "STU000001", // Passing a valid userID for testing
                 "",
                 "Doe",
                 "0123456789",
@@ -71,9 +78,10 @@ class StudentFactoryTest {
     @Test
     void createStudent_WithYearOfStudyZero_ShouldReturnNull() {
         Student student = StudentFactory.createStudent(
+                "STU000001", // Passing a valid userID for testing
                 "John",
                 "Doe",
-                "1234567890",
+                "1234567890", // contact invalid but we are testing yearOfStudy
                 'M',
                 LocalDate.of(2000, 1, 15),
                 IDType.PASSPORT,

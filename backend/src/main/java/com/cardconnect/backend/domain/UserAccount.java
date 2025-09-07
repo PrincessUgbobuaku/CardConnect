@@ -1,20 +1,26 @@
 package com.cardconnect.backend.domain;
 
 import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 
 @Entity
 public class UserAccount {
 
     @Id
-    private String accountId; // ✅ Use String, not Long
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long accountId; // Now a generated Long ID (primary key)
 
+    @Column(unique = true, nullable = false)
     private String email;
+
+    @Column(nullable = false)
     private String passwordHash;
+
     private LocalDateTime createdAt;
 
     @OneToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "userID")
+    @JoinColumn(name = "user_id", referencedColumnName = "id") // FK to User PK
     private User user;
 
     protected UserAccount() {
@@ -22,14 +28,16 @@ public class UserAccount {
     }
 
     private UserAccount(Builder builder) {
-        this.accountId = builder.accountId;
+        this.accountId = builder.accountId; // optional for copy/update, ignored on create
         this.email = builder.email;
         this.passwordHash = builder.passwordHash;
-        this.user = builder.user;
         this.createdAt = builder.createdAt != null ? builder.createdAt : LocalDateTime.now();
+        this.user = builder.user;
     }
 
-    public String getAccountId() {
+    // Getters
+
+    public Long getAccountId() {
         return accountId;
     }
 
@@ -52,22 +60,22 @@ public class UserAccount {
     @Override
     public String toString() {
         return "UserAccount{" +
-                "accountId='" + accountId + '\'' +
+                "accountId=" + accountId +
                 ", email='" + email + '\'' +
                 ", createdAt=" + createdAt +
-                ", user=" + (user != null ? user.getUserID() : null) +
+                ", user=" + (user != null ? user.getUserId() : null) +
                 '}';
     }
 
     // ✅ Builder Class
     public static class Builder {
-        private String accountId;
+        private Long accountId;
         private String email;
         private String passwordHash;
         private LocalDateTime createdAt;
         private User user;
 
-        public Builder setAccountId(String accountId) {
+        public Builder setAccountId(Long accountId) {
             this.accountId = accountId;
             return this;
         }

@@ -65,8 +65,8 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   checkboxContainer: {
-    width: '80%',          // same width as your inputs
-    alignSelf: 'center',
+    width: '100%',          // same width as your inputs
+    alignSelf: 'left',
     // paddingLeft: 35,
     // paddingRight: 35,
     // gap: 80,
