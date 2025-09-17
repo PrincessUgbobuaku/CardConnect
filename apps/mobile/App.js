@@ -9,6 +9,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Provider as PaperProvider, DefaultTheme } from "react-native-paper";
+import {createDrawerNavigator} from "@react-navigation/drawer";
 // import CreatePassword from "./screens/CreatePassword.js";
 // import CardAppointmentScreen from "./screens/Appointments.js";
 // import EditProfile from "./screens/EditProfile.js";
@@ -24,16 +25,20 @@ const theme = {
 
 const Stack = createNativeStackNavigator();
 
+const Drawer = createDrawerNavigator();
+
 export default function App() {
   return (
     <PaperProvider theme={theme}>
       <SafeAreaProvider>
         <View style={styles.container}>
-          <NavigationContainer>
-            <Stack.Navigator
-              initialRouteName="Dashboard"
-              screenOptions={{ headerShown: false }}
-            >
+           <NavigationContainer>
+                <Drawer.Navigator
+                  initialRouteName="Dashboard"
+                  screenOptions={{
+                    headerShown: false, // we use your custom NavBar instead
+                  }}
+                >
 
              {/* } <Stack.Screen name="Welcome" component={Welcome} /> */}
               {/*<Stack.Screen name="Login" component={Login} />
@@ -47,7 +52,7 @@ export default function App() {
               <Stack.Screen name="ViewStudentCard" component={ViewStudentCard} />
               <Stack.Screen name="ReportCard" component={ReportCard} />
               <Stack.Screen name="NotificationsCenter" component={NotificationsCenter} />
-            </Stack.Navigator>
+            </Drawer.Navigator>
             <StatusBar style="dark" />
           </NavigationContainer>
         </View>
