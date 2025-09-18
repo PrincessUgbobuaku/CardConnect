@@ -1,5 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View } from "react-native";
+import { UserProvider } from "./context/UserContext";
 // import Login from "../mobile/screens/Login.js"; //
 // import Welcome from "../mobile/screens/Welcome.js";
 // import SignUp from "../mobile/screens/SignUp.js";
@@ -13,10 +14,13 @@ import {createDrawerNavigator} from "@react-navigation/drawer";
 // import CreatePassword from "./screens/CreatePassword.js";
 // import CardAppointmentScreen from "./screens/Appointments.js";
 // import EditProfile from "./screens/EditProfile.js";
-import Dashboard from "./screens/Dashboard.js";
-import ViewStudentCard from "./screens/ViewStudentCard.js";
-import ReportCard from "./screens/ReportCard.js";
-import NotificationsCenter from "./screens/NotificationsCenter.js";
+import Welcome from "./screens/Welcome";
+import Login from "./screens/Login";
+import SignUp from "./screens/SignUp";
+import Dashboard from "./screens/Dashboard";
+import ViewStudentCard from "./screens/ViewStudentCard";
+import ReportCard from "./screens/ReportCard";
+import NotificationsCenter from "./screens/NotificationsCenter";
 
 const theme = {
   ...DefaultTheme,
@@ -27,20 +31,38 @@ const Stack = createNativeStackNavigator();
 
 const Drawer = createDrawerNavigator();
 
+// Drawer screens (main app)
+function MainDrawer() {
+  return (
+    <Drawer.Navigator
+      initialRouteName="Dashboard"
+      screenOptions={{ headerShown: false }}
+    >
+      <Drawer.Screen name="Dashboard" component={Dashboard} />
+      <Drawer.Screen name="ViewStudentCard" component={ViewStudentCard} />
+      <Drawer.Screen name="ReportCard" component={ReportCard} />
+      <Drawer.Screen name="NotificationsCenter" component={NotificationsCenter} />
+      {/* Add other Drawer screens here */}
+    </Drawer.Navigator>
+  );
+}
+
 export default function App() {
   return (
-    <PaperProvider theme={theme}>
-      <SafeAreaProvider>
-        <View style={styles.container}>
-           <NavigationContainer>
-                <Drawer.Navigator
-                  initialRouteName="Dashboard"
-                  screenOptions={{
-                    headerShown: false, // we use your custom NavBar instead
-                  }}
-                >
+    <UserProvider>
+      <PaperProvider theme={theme}>
+        <SafeAreaProvider>
+          <View style={styles.container}>
+            <NavigationContainer>
+              <Stack.Navigator
+                initialRouteName="Welcome"
+                screenOptions={{ headerShown: false }}
+              >
 
-             {/* } <Stack.Screen name="Welcome" component={Welcome} /> */}
+<Stack.Screen name="Welcome" component={Welcome} />
+                <Stack.Screen name="Login" component={Login} />
+                <Stack.Screen name="SignUp" component={SignUp} />
+                <Stack.Screen name="MainDrawer" component={MainDrawer} /> 
               {/*<Stack.Screen name="Login" component={Login} />
               <Stack.Screen name="SignUp" component={SignUp} />
               <Stack.Screen name="Profile" component={Profile} />
@@ -52,12 +74,13 @@ export default function App() {
               <Stack.Screen name="ViewStudentCard" component={ViewStudentCard} />
               <Stack.Screen name="ReportCard" component={ReportCard} />
               <Stack.Screen name="NotificationsCenter" component={NotificationsCenter} />
-            </Drawer.Navigator>
-            <StatusBar style="dark" />
-          </NavigationContainer>
-        </View>
-      </SafeAreaProvider>
-    </PaperProvider>
+              </Stack.Navigator>
+              <StatusBar style="dark" />
+            </NavigationContainer>
+          </View>
+        </SafeAreaProvider>
+      </PaperProvider>
+    </UserProvider>
   );
 }
 

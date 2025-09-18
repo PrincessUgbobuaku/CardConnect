@@ -64,7 +64,12 @@ export default function Login({ navigation }) {
       Alert.alert("Success", "Login successful!", [
         {
           text: "OK",
-          onPress: () => navigation.navigate("Profile"),
+          onPress: () => {
+            navigation.reset({
+              index: 0,
+              routes: [{ name: "MainDrawer" }],
+            });
+          },
         },
       ]);
     } catch (err) {

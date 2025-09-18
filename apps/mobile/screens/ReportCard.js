@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+import { UserContext } from "../contexts/UserContext";
 import {
   View,
   StyleSheet,
   Text,
   TouchableOpacity,
   Modal,
+  TextInput,
 } from "react-native";
 import { AppButton } from "../components/MobileButton";
 import NavBar from "../components/NavigationBar";
@@ -13,6 +15,8 @@ import Icon from "react-native-vector-icons/Ionicons";
 export default function ReportCard() {
   const [selectedStatus, setSelectedStatus] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [notes, setNotes] = useState(""); 
+  const { studentId } = useContext(UserContext);
 
   const handleSubmit = () => {
     if (!selectedStatus) {
@@ -22,10 +26,30 @@ export default function ReportCard() {
     setModalVisible(true);
   };
 
-  const confirmReport = () => {
+  const confirmReport = async () => {
     setModalVisible(false);
-    alert(`Card report submitted as '${selectedStatus}'. We will notify you shortly.`);
-    setSelectedStatus(null);
+    if (!studentId) {
+      alert("Student ID is missing. Please log in again.");
+      return;
+    }
+    try {
+      const response = await fetch("http://192.168.101.106:9091/api/cardreports", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ studentId, status: selectedStatus, notes }), // Include notes
+      });
+      if (response.ok) {
+        alert(`Card report submitted as '${selectedStatus}'.`);
+        setSelectedStatus(null);
+        setNotes(""); // Reset notes
+      } else {
+        const data = await response.json();
+        alert("Failed to submit report: " + data.message);
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Error submitting report. Check your network or server.");
+    }
   };
 
   return (
@@ -70,11 +94,27 @@ export default function ReportCard() {
         </View>
       </View>
 
+      {/* Notes Input */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Additional Notes (optional):</Text>
+        <TextInput
+          style={styles.notesInput}
+          placeholder="Enter any details about your card..."
+          value={notes}
+          onChangeText={setNotes}
+          multiline
+          numberOfLines={3}
+        />
+      </View>
+
       {/* Action Buttons */}
       <View style={styles.actionRow}>
         <TouchableOpacity
           style={[styles.actionButton, styles.cancelButton]}
-          onPress={() => setSelectedStatus(null)}
+          onPress={() => {
+            setSelectedStatus(null);
+            setNotes("");
+          }}
         >
           <Text style={styles.cancelText}>Cancel</Text>
         </TouchableOpacity>
@@ -100,7 +140,11 @@ export default function ReportCard() {
             <Text style={styles.modalMessage}>
               Are you sure you want to report this card as "{selectedStatus}"?
             </Text>
-
+            {notes ? (
+              <Text style={styles.modalMessage}>
+                Notes: {notes}
+              </Text>
+            ) : null}
             <View style={styles.modalRow}>
               <TouchableOpacity
                 style={[styles.modalBtn, styles.noBtn]}
@@ -148,6 +192,19 @@ const styles = StyleSheet.create({
   statusButtonSelected: { backgroundColor: "#145DA0" },
   statusText: { color: "#145DA0", fontWeight: "bold" },
   statusTextSelected: { color: "#fff" },
+
+  /* Notes Input */
+  notesInput: {
+    borderWidth: 1,
+    borderColor: "#145DA0",
+    borderRadius: 5,
+    padding: 10,
+    backgroundColor: "#fff",
+    fontSize: 14,
+    minHeight: 60,
+    textAlignVertical: "top",
+    marginBottom: 10,
+  },
 
   /* Action Buttons */
   actionRow: { flexDirection: "row", justifyContent: "space-between", marginTop: 30, paddingHorizontal: 20 },
