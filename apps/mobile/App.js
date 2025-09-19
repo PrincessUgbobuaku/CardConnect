@@ -1,17 +1,22 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
-import Login from "../mobile/screens/Login.js"; // Adjust the path if needed
-import Welcome from "../mobile/screens/Welcome.js"; // Adjust the path if needed
-import SignUp from "../mobile/screens/SignUp.js"; // Adjust the path if needed
-import Profile from "../mobile/screens/Profile.js"; // Adjust the path if needed
-import Appointments from "../mobile/screens/Appointments.js"; // Adjust the path if needed
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { StyleSheet, View } from "react-native";
+// import Login from "../mobile/screens/Login.js"; //
+// import Welcome from "../mobile/screens/Welcome.js";
+// import SignUp from "../mobile/screens/SignUp.js";
+// import Profile from "../mobile/screens/Profile.js";
+// import Appointments from "../mobile/screens/Appointments.js";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Provider as PaperProvider, DefaultTheme } from "react-native-paper";
-import CreatePassword from "./screens/CreatePassword.js";
-import CardAppointmentScreen from "./screens/Appointments.js";
-import EditProfile from "./screens/EditProfile.js";
+import {createDrawerNavigator} from "@react-navigation/drawer";
+// import CreatePassword from "./screens/CreatePassword.js";
+// import CardAppointmentScreen from "./screens/Appointments.js";
+// import EditProfile from "./screens/EditProfile.js";
+import Dashboard from "./screens/Dashboard.js";
+import ViewStudentCard from "./screens/ViewStudentCard.js";
+import ReportCard from "./screens/ReportCard.js";
+import NotificationsCenter from "./screens/NotificationsCenter.js";
 
 const theme = {
   ...DefaultTheme,
@@ -20,53 +25,34 @@ const theme = {
 
 const Stack = createNativeStackNavigator();
 
+const Drawer = createDrawerNavigator();
+
 export default function App() {
   return (
     <PaperProvider theme={theme}>
       <SafeAreaProvider>
         <View style={styles.container}>
-          <NavigationContainer>
-            <Stack.Navigator
-              initialRouteName="Welcome"
-              screenOptions={{ headerShown: false }}
-            >
-              <Stack.Screen name="Welcome" component={Welcome} />
-              <Stack.Screen
-                name="Login"
-                component={Login}
-                options={{ title: "Login" }}
-              />
-              <Stack.Screen
-                name="SignUp"
-                component={SignUp}
-                options={{ title: "SignUp" }}
-              />
-              <Stack.Screen
-                name="Profile"
-                component={Profile}
-                options={{ title: "Profile" }}
-              />
+           <NavigationContainer>
+                <Drawer.Navigator
+                  initialRouteName="Dashboard"
+                  screenOptions={{
+                    headerShown: false, // we use your custom NavBar instead
+                  }}
+                >
 
+             {/* } <Stack.Screen name="Welcome" component={Welcome} /> */}
+              {/*<Stack.Screen name="Login" component={Login} />
+              <Stack.Screen name="SignUp" component={SignUp} />
+              <Stack.Screen name="Profile" component={Profile} />
               <Stack.Screen name="EditProfile" component={EditProfile} />
+              <Stack.Screen name="CreatePassword" component={CreatePassword} />
+              <Stack.Screen name="Appointments" component={Appointments} /> */}
 
-              <Stack.Screen
-                name="CreatePassword"
-                component={CreatePassword}
-                options={{ title: "CreatePassword" }}
-              />
-
-              <Stack.Screen
-                name="Appointments"
-                component={Appointments}
-                options={{ title: "Appointments" }}
-              />
-
-              {/* <SafeAreaView style={styles.container}> */}
-              {/* <Login /> */}
-
-              {/* <Welcome /> */}
-              {/* </SafeAreaView> */}
-            </Stack.Navigator>
+              <Stack.Screen name="Dashboard" component={Dashboard} />
+              <Stack.Screen name="ViewStudentCard" component={ViewStudentCard} />
+              <Stack.Screen name="ReportCard" component={ReportCard} />
+              <Stack.Screen name="NotificationsCenter" component={NotificationsCenter} />
+            </Drawer.Navigator>
             <StatusBar style="dark" />
           </NavigationContainer>
         </View>
