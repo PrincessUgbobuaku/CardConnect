@@ -1,30 +1,71 @@
-import React from "react";
-import Welcome from "./screens/Welcome"; //import your welcome screen to be rendered
-import Login from "./screens/Login"; //import your login screen to be rendered
-import SignUp from "./screens/SignUp"; //import your login screen to be rendered
-import { WebButton } from "./components/WebButton";
+// src/App.js
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import NotificationCenter from './screens/NotificationsCenter';
+import ViewCard from './screens/ViewCard';
+import Login from './screens/Login';
+import SignUp from './screens/SignUp';
+import './App.css';
 
 function App() {
-  return (
-    <div className="App">
-      {/* View imported login interface */}
-      <Login />
+    const [isSideNavActive, setIsSideNavActive] = useState(false);
 
-      {/* Displays button, comment it out */}
-      <WebButton onClick={() => alert("Welcome to the web!")}>
-        Press Me
-      </WebButton>
+    const toggleSideNav = () => {
+        setIsSideNavActive(!isSideNavActive);
+    };
 
-      {/* Displays a wider button using props, comment it out */}
+    const closeSideNav = () => {
+        setIsSideNavActive(false);
+    };
 
-      <WebButton
-        onClick={() => alert("Custom width!")}
-        style={{ width: "500px" }} // Set width here
-      >
-        Wider Button
-      </WebButton>
-    </div>
-  );
+    return (
+        <Router>
+            <div className="App">
+                <Routes>
+                    {/* Public Routes */}
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/signup" element={<SignUp />} />
+
+                    {/* Unified Routes - Components adapt based on user role */}
+                    <Route
+                        path="/notifications"
+                        element={
+                            <NotificationCenter
+                                isSideNavActive={isSideNavActive}
+                                toggleSideNav={toggleSideNav}
+                                closeSideNav={closeSideNav}
+                            />
+                        }
+                    />
+                    <Route
+                        path="/virtual-card"
+                        element={
+                            <ViewCard
+                                isSideNavActive={isSideNavActive}
+                                toggleSideNav={toggleSideNav}
+                                closeSideNav={closeSideNav}
+                            />
+                        }
+                    />
+
+                    {/* Default Route */}
+                    <Route path="/" element={<Login />} />
+
+                    {/* Redirect any old routes to the new unified ones */}
+                    <Route path="/user-card" element={<ViewCard
+                        isSideNavActive={isSideNavActive}
+                        toggleSideNav={toggleSideNav}
+                        closeSideNav={closeSideNav}
+                    />} />
+                    <Route path="/user-notifications" element={<NotificationCenter
+                        isSideNavActive={isSideNavActive}
+                        toggleSideNav={toggleSideNav}
+                        closeSideNav={closeSideNav}
+                    />} />
+                </Routes>
+            </div>
+        </Router>
+    );
 }
 
 export default App;
