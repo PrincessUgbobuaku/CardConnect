@@ -27,7 +27,7 @@ function TestViewCard() {
     course: "BSc in Software Engineering",
   };
 
-  const mockImageUrl = require("../../img/image1.jpg"); // Or keep it null to test fallback
+  const mockImageUrl = require("../../img/image1.jpg");
 
   return (
     <div>
