@@ -62,7 +62,7 @@ export default function ReportCard() {
         <Icon name="alert-circle-outline" size={28} color="#145DA0" style={styles.headerIcon} />
         <Text style={styles.headerTitle}>Report a Lost/Stolen Card</Text>
         <Text style={styles.headerMessage}>
-          Has your student card been lost, stolen, or not received?
+          Has your student card been lost, stolen, damaged or not received?
           You can report it here, and your new card will be prepared.
           Please note that your current card will be void.
         </Text>
@@ -72,7 +72,7 @@ export default function ReportCard() {
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>My Card Was:</Text>
         <View style={styles.statusRow}>
-          {["Lost", "Stolen", "Not Received"].map((status) => (
+          {["Lost", "Stolen", "Damaged", "Not Received"].map((status) => (
             <TouchableOpacity
               key={status}
               style={[

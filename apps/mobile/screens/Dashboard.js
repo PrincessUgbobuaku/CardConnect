@@ -15,22 +15,19 @@ export default function Dashboard() {
     { label: "Book card appointment", icon: "calendar-outline", screen: "Appointments" },
     { label: "Print & Go", icon: "print-outline", screen: "PrintPages" },
     { label: "Report card", icon: "alert-circle-outline", screen: "ReportCard" },
-    { label: "Profile", icon: "person-outline", screen: "EditProfile" },
     { label: "Printing Credits", icon: "cash-outline", screen: "PrintingCredits" },
-    { label: "Notifications Centre", icon: "notifications-outline", screen: "NotificationsCenter" },
-    { label: "Log Out", icon: "log-out-outline", screen: "Login" },
   ];
 
   return (
     <View style={styles.container}>
       <NavBar title="CARDCONNECT" />
 
-           <View style={styles.greetingContainer}>
-                  <Text style={styles.greetingText}>
-                    Hi {userName} 👋!
-                  </Text>
-                </View>
+      {/* Greeting */}
+      <View style={styles.greetingContainer}>
+        <Text style={styles.greetingText}>Hi {userName} 👋!</Text>
+      </View>
 
+      {/* Menu Grid */}
       <View style={styles.grid}>
         {menuItems.map((item, index) => (
           <TouchableOpacity
@@ -49,27 +46,22 @@ export default function Dashboard() {
 
 const styles = StyleSheet.create({
   container: {
-     flex: 1,
-        backgroundColor: "#F5F2F2",
+    flex: 1,
+    backgroundColor: "#F5F2F2",
   },
-
-   greetingContainer: {
-       flexDirection: "row",
-       alignItems: "center",
-       justifyContent: "center",
-       marginBottom: 5,
-       marginTop: 10,
-     },
-     greetingText: {
-       fontSize: 22,
-       fontWeight: "600",
-       color: "#000",
-       marginRight: 6,
-     },
-     waveIcon: {
-       marginTop: 2,
-     },
-
+  greetingContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 5,
+    marginTop: 10,
+  },
+  greetingText: {
+    fontSize: 22,
+    fontWeight: "600",
+    color: "#000",
+    marginRight: 6,
+  },
   grid: {
     flexDirection: "row",
     flexWrap: "wrap",
