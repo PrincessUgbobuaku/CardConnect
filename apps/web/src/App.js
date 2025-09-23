@@ -1,17 +1,14 @@
 import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
-/* Your app screens */
 import NotificationCenter from "./screens/NotificationsCenter";
 import ViewCard from "./screens/ViewCard";
-import LoginScreen from "./screens/Login";
-import SignUpScreen from "./screens/SignUp";
 import TestViewCard from "./screens/testing/TestViewCard";
 import TestNotificationCenter from "./screens/testing/TestNotificationCenter";
 
 /* Partner's pages (avoid name collisions by aliasing if needed) */
-import LoginPage from "./screens/Login";        // partner's Login page
-import SignupPage from "./screens/Signup";     // partner's Signup page
+import Login from "./screens/Login";        // partner's Login page
+import Signup from "./screens/Signup";     // partner's Signup page
 import Welcome from "./screens/Welcome";
 import Profile from "./screens/Profile";
 
@@ -77,7 +74,7 @@ export default function App() {
           />
 
           {/* Default route -> your Login screen (change to Welcome if you'd rather) */}
-          <Route path="/" element={<LoginScreen />} />
+          <Route path="/" element={<Login />} />
 
           {/* Redirects / old routes mapped to new unified ones */}
           <Route
