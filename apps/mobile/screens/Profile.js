@@ -7,6 +7,7 @@ import { AppButton } from "../components/MobileButton";
 import { useNavigation } from "@react-navigation/native";
 import { useFocusEffect } from "@react-navigation/native";
 import { MaterialIcons } from "@expo/vector-icons";
+import NavBar from "../components/NavigationBar";
 
 export default function Profile() {
   const navigation = useNavigation();
