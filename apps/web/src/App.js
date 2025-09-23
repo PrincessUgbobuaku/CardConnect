@@ -1,16 +1,23 @@
-// src/App.js
 import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
+/* Your app screens */
 import NotificationCenter from "./screens/NotificationsCenter";
 import ViewCard from "./screens/ViewCard";
-import Login from "./screens/Login";
-import SignUp from "./screens/SignUp";
+import LoginScreen from "./screens/Login";
+import SignUpScreen from "./screens/SignUp";
 import TestViewCard from "./screens/testing/TestViewCard";
 import TestNotificationCenter from "./screens/testing/TestNotificationCenter";
 
+/* Partner's pages (avoid name collisions by aliasing if needed) */
+import LoginPage from "./screens/Login";        // partner's Login page
+import SignupPage from "./screens/Signup";     // partner's Signup page
+import Welcome from "./screens/Welcome";
+import Profile from "./screens/Profile";
+
 import "./App.css";
 
-function App() {
+export default function App() {
   const [isSideNavActive, setIsSideNavActive] = useState(false);
 
   const toggleSideNav = () => {
@@ -25,11 +32,28 @@ function App() {
     <Router>
       <div className="App">
         <Routes>
-          {/* Public Routes */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<SignUp />} />
+          {/* --------------------
+             Public routes (both teams)
+             -------------------- */}
 
-          {/* Unified Routes - Components adapt based on user role */}
+          {/* Primary login/signup routes (your app's screens) */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+
+          {/* Legacy / partner pages kept available under alternate routes
+              so both teams' code remains usable without naming conflicts.
+              You can change these URLs to whatever you prefer, or remove
+              them once everyone migrates to the same components. */}
+          <Route path="/legacy-login" element={<Login />} />
+          <Route path="/legacy-signup" element={<Signup />} />
+
+          {/* Partner's welcome and profile pages */}
+          <Route path="/welcome" element={<Welcome />} />
+          <Route path="/profile" element={<Profile />} />
+
+          {/* --------------------
+             Unified / role-aware routes (your app)
+             -------------------- */}
           <Route
             path="/notifications"
             element={
@@ -40,6 +64,7 @@ function App() {
               />
             }
           />
+
           <Route
             path="/virtual-card"
             element={
@@ -51,10 +76,10 @@ function App() {
             }
           />
 
-          {/* Default Route */}
-          <Route path="/" element={<Login />} />
+          {/* Default route -> your Login screen (change to Welcome if you'd rather) */}
+          <Route path="/" element={<LoginScreen />} />
 
-          {/* Redirect any old routes to the new unified ones */}
+          {/* Redirects / old routes mapped to new unified ones */}
           <Route
             path="/user-card"
             element={
@@ -76,12 +101,9 @@ function App() {
             }
           />
 
-          {/* ---------------------------------------------
-            Temporary test route for ViewCard component.
-            Renders the TestViewCard component using mock data
-            to simulate user information without backend integration.
-            Useful for UI/UX testing and layout adjustments.
-            --------------------------------------------- */}
+          {/* --------------------
+             Temporary test routes
+             -------------------- */}
           <Route
             path="/test-viewcard"
             element={
@@ -93,12 +115,6 @@ function App() {
             }
           />
 
-          {/* ---------------------------------------------
-            Temporary test route for Notifications component.
-            Renders the TestNotificationCenter component using mock data
-            to simulate user information without backend integration.
-            Useful for UI/UX testing and layout adjustments.
-            --------------------------------------------- */}
           <Route
             path="/test-notifications"
             element={<TestNotificationCenter />}
@@ -108,5 +124,3 @@ function App() {
     </Router>
   );
 }
-
-export default App;
