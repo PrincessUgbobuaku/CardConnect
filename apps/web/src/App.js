@@ -10,10 +10,10 @@ import TestViewCard from "./screens/testing/TestViewCard";
 import TestNotificationCenter from "./screens/testing/TestNotificationCenter";
 
 /* Partner's pages (avoid name collisions by aliasing if needed) */
-import LoginPage from "./pages/Login";        // partner's Login page
-import SignupPage from "./pages/Signup";     // partner's Signup page
-import Welcome from "./pages/Welcome";
-import Profile from "./pages/Profile";
+import LoginPage from "./screens/Login";        // partner's Login page
+import SignupPage from "./screens/Signup";     // partner's Signup page
+import Welcome from "./screens/Welcome";
+import Profile from "./screens/Profile";
 
 import "./App.css";
 
@@ -37,15 +37,15 @@ export default function App() {
              -------------------- */}
 
           {/* Primary login/signup routes (your app's screens) */}
-          <Route path="/login" element={<LoginScreen />} />
-          <Route path="/signup" element={<SignUpScreen />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
 
           {/* Legacy / partner pages kept available under alternate routes
               so both teams' code remains usable without naming conflicts.
               You can change these URLs to whatever you prefer, or remove
               them once everyone migrates to the same components. */}
-          <Route path="/legacy-login" element={<LoginPage />} />
-          <Route path="/legacy-signup" element={<SignupPage />} />
+          <Route path="/legacy-login" element={<Login />} />
+          <Route path="/legacy-signup" element={<Signup />} />
 
           {/* Partner's welcome and profile pages */}
           <Route path="/welcome" element={<Welcome />} />
