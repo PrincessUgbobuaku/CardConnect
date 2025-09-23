@@ -1,12 +1,17 @@
+import "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View } from "react-native";
 import { UserProvider } from "./contexts/UserContext";
+import Login from "../mobile/screens/Login.js"; //
+import Welcome from "../mobile/screens/Welcome.js";
+import SignUp from "../mobile/screens/SignUp.js";
+import Profile from "../mobile/screens/Profile.js";
+import Appointments from "../mobile/screens/Appointments.js";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Provider as PaperProvider, DefaultTheme } from "react-native-paper";
 import { createDrawerNavigator } from "@react-navigation/drawer";
-
 // Screens
 // import Welcome from "./screens/Welcome";
 // import Login from "./screens/Login";
@@ -16,10 +21,12 @@ import EditProfile from "./screens/EditProfile";
 import ViewStudentCard from "./screens/ViewStudentCard";
 import ReportCard from "./screens/ReportCard";
 import NotificationsCenter from "./screens/NotificationsCenter";
-import Appointments from "./screens/Appointments";
 import PrintPages from "./screens/PrintPages";
 import PrintingCredits from "./screens/PrintingCredits";
 import Profile from "./screens/Profile";
+import CreatePassword from "./screens/CreatePassword.js";
+import CardAppointmentScreen from "./screens/Appointments.js";
+
 
 const theme = {
   ...DefaultTheme,
@@ -66,6 +73,25 @@ export default function App() {
 
                 {/* Main app inside Drawer */}
                 <Stack.Screen name="MainDrawer" component={MainDrawer} />
+                  
+                  {/* } <Stack.Screen name="Welcome" component={Welcome} /> */}
+              {/*<Stack.Screen name="Login" component={Login} />
+              <Stack.Screen name="SignUp" component={SignUp} />
+              <Stack.Screen name="Profile" component={Profile} />
+              <Stack.Screen name="EditProfile" component={EditProfile} />
+              <Stack.Screen name="CreatePassword" component={CreatePassword} />
+              <Stack.Screen name="Appointments" component={Appointments} /> */}
+
+              <Stack.Screen name="Dashboard" component={Dashboard} />
+              <Stack.Screen
+                name="ViewStudentCard"
+                component={ViewStudentCard}
+              />
+              <Stack.Screen name="ReportCard" component={ReportCard} />
+              <Stack.Screen
+                name="NotificationsCenter"
+                component={NotificationsCenter}
+              />
               </Stack.Navigator>
               <StatusBar style="dark" />
             </NavigationContainer>
@@ -73,6 +99,7 @@ export default function App() {
         </SafeAreaProvider>
       </PaperProvider>
     </UserProvider>
+
   );
 }
 

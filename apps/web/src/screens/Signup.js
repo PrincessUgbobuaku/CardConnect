@@ -1,21 +1,41 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/cardconnect-logo.png";
 
 export default function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [acceptPolicy, setAcceptPolicy] = useState(false);
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
 
     if (!acceptPolicy) {
-      alert("You must accept the Privacy Policy before registering.");
+      setError("You must accept the Privacy Policy before registering.");
       return;
     }
 
-    alert(`Email: ${email}\nPassword: ${password}`);
+    try {
+      const response = await fetch("http://localhost:8080/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.message || "Signup failed");
+      }
+
+      const data = await response.json();
+      localStorage.setItem("user", JSON.stringify(data));
+      navigate("/profile");
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   const containerStyle = {
@@ -86,6 +106,12 @@ export default function Signup() {
     textAlign: "center",
   };
 
+  const errorStyle = {
+    color: "red",
+    fontSize: "14px",
+    marginTop: "10px",
+  };
+
   return (
     <div style={containerStyle}>
       {/* Left Side */}
@@ -93,11 +119,7 @@ export default function Signup() {
         <img
           src={logo}
           alt="Card Connect Logo"
-          style={{
-            width: "80px",
-            height: "80px",
-            marginBottom: "15px",
-          }}
+          style={{ width: "80px", height: "80px", marginBottom: "15px" }}
         />
         <h1 style={{ fontSize: "28px", marginBottom: "10px" }}>
           Card Connect Registration
@@ -147,6 +169,8 @@ export default function Signup() {
           <button type="submit" style={buttonStyle}>
             Create Account
           </button>
+
+          {error && <div style={errorStyle}>{error}</div>}
 
           <div style={smallTextStyle}>
             Already have an account?{" "}
