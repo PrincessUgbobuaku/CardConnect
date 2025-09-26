@@ -23,7 +23,6 @@ import ReportCard from "./screens/ReportCard";
 import NotificationsCenter from "./screens/NotificationsCenter";
 import PrintPages from "./screens/PrintPages";
 import PrintingCredits from "./screens/PrintingCredits";
-import Profile from "./screens/Profile";
 import CreatePassword from "./screens/CreatePassword.js";
 import CardAppointmentScreen from "./screens/Appointments.js";
 
