@@ -28,6 +28,7 @@ export default function CardAppointmentScreen() {
   const campuses = [
     'Bellville Campus',
     'District Six Campus',
+    'GrangerBay Campus',
     'Mowbray Campus',
     'Wellington Campus',
   ];

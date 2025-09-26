@@ -9,7 +9,8 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Provider as PaperProvider, DefaultTheme } from "react-native-paper";
 
-import CardAppointmentScreen from "./screens/Appointments.js";
+// import CardAppointmentScreen from "./screens/Appointments.js";
+import PrintPagesScreen from "./screens/PrintPages.js";
 
 const theme = {
   ...DefaultTheme,
@@ -25,14 +26,14 @@ export default function App() {
         <View style={styles.container}>
           <NavigationContainer>
             <Stack.Navigator
-              initialRouteName="Welcome"
+              initialRouteName="PrintPages"
               screenOptions={{ headerShown: false}}
             >
-              <Stack.Screen name="Welcome" component={CardAppointmentScreen} />
+              <Stack.Screen name="PrintPages" component={PrintPagesScreen} />
               <Stack.Screen name="Login" component={Login} options={{title: "Login"}}/>
               <Stack.Screen name="SignUp" component={SignUp} options={{title: "SignUp"}}/>
               <Stack.Screen name="Profile" component={Profile} options={{title: "Profile"}}/>
-              <Stack.Screen name="CardAppointment" component={CardAppointmentScreen} options={{title: "Card Appointment"}}/>
+              {/* <Stack.Screen name="CardAppointment" component={CardAppointmentScreen} options={{title: "Card Appointment"}}/> */}
 
               {/* <SafeAreaView style={styles.container}> */}
               {/* <Login /> */}
