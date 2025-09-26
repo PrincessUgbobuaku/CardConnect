@@ -1,7 +1,6 @@
 {
   "name": "cardconnect",
   "version": "1.0.0",
-  "main": "index.js",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
@@ -27,7 +26,13 @@
     "react-native-screens": "~4.11.1",
     "react-native-svg": "15.11.2",
     "react-native-vector-icons": "^10.2.0",
+<<<<<<< HEAD
+    "react-dom": "19.0.0",
+    "react-native-web": "^0.20.0",
+    "@expo/metro-runtime": "~5.0.4"
+=======
     "react-native-web": "^0.20.0"
+>>>>>>> dda52351399c04cfb5ba21a994135197d3344ba9
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
