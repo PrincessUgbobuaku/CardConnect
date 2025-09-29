@@ -26,7 +26,6 @@ import PrintingCredits from "./screens/PrintingCredits";
 import CreatePassword from "./screens/CreatePassword.js";
 import CardAppointmentScreen from "./screens/Appointments.js";
 
-
 const theme = {
   ...DefaultTheme,
   roundness: 10,
@@ -45,7 +44,10 @@ function MainDrawer() {
       <Drawer.Screen name="Dashboard" component={Dashboard} />
       <Drawer.Screen name="ViewStudentCard" component={ViewStudentCard} />
       <Drawer.Screen name="ReportCard" component={ReportCard} />
-      <Drawer.Screen name="NotificationsCenter" component={NotificationsCenter} />
+      <Drawer.Screen
+        name="NotificationsCenter"
+        component={NotificationsCenter}
+      />
       <Drawer.Screen name="Appointments" component={Appointments} />
       <Drawer.Screen name="PrintPages" component={PrintPages} />
       <Drawer.Screen name="PrintingCredits" component={PrintingCredits} />
@@ -65,32 +67,30 @@ export default function App() {
                 initialRouteName="MainDrawer"
                 screenOptions={{ headerShown: false }}
               >
-                {/* Auth screens (disabled for now) */}
-                {/* <Stack.Screen name="Welcome" component={Welcome} />
-                <Stack.Screen name="Login" component={Login} />
-                <Stack.Screen name="SignUp" component={SignUp} /> */}
-
                 {/* Main app inside Drawer */}
                 <Stack.Screen name="MainDrawer" component={MainDrawer} />
-                  
-                  {/* } <Stack.Screen name="Welcome" component={Welcome} /> */}
-              {/*<Stack.Screen name="Login" component={Login} />
-              <Stack.Screen name="SignUp" component={SignUp} />
-              <Stack.Screen name="Profile" component={Profile} />
-              <Stack.Screen name="EditProfile" component={EditProfile} />
-              <Stack.Screen name="CreatePassword" component={CreatePassword} />
-              <Stack.Screen name="Appointments" component={Appointments} /> */}
 
-              <Stack.Screen name="Dashboard" component={Dashboard} />
-              <Stack.Screen
-                name="ViewStudentCard"
-                component={ViewStudentCard}
-              />
-              <Stack.Screen name="ReportCard" component={ReportCard} />
-              <Stack.Screen
-                name="NotificationsCenter"
-                component={NotificationsCenter}
-              />
+                <Stack.Screen name="Welcome" component={Welcome} />
+                <Stack.Screen name="Login" component={Login} />
+                <Stack.Screen name="SignUp" component={SignUp} />
+                <Stack.Screen name="Profile" component={Profile} />
+                <Stack.Screen name="EditProfile" component={EditProfile} />
+                <Stack.Screen
+                  name="CreatePassword"
+                  component={CreatePassword}
+                />
+                <Stack.Screen name="Appointments" component={Appointments} />
+
+                <Stack.Screen name="Dashboard" component={Dashboard} />
+                <Stack.Screen
+                  name="ViewStudentCard"
+                  component={ViewStudentCard}
+                />
+                <Stack.Screen name="ReportCard" component={ReportCard} />
+                <Stack.Screen
+                  name="NotificationsCenter"
+                  component={NotificationsCenter}
+                />
               </Stack.Navigator>
               <StatusBar style="dark" />
             </NavigationContainer>
@@ -98,7 +98,6 @@ export default function App() {
         </SafeAreaProvider>
       </PaperProvider>
     </UserProvider>
-
   );
 }
 

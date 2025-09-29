@@ -96,10 +96,7 @@ export default function CreatePassword({ navigation, route }) {
   };
 
   return (
-    <LinearGradient
-      colors={["#145DA0", "#0C2D48"]}
-      style={styles.container}
-    >
+    <LinearGradient colors={["#145DA0", "#0C2D48"]} style={styles.container}>
       <StatusBar style="light" />
 
       {/* Back Button */}
