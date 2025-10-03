@@ -9,12 +9,8 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import DateTimePicker from '@react-native-community/datetimepicker';
-<<<<<<< HEAD
-// ...existing code...
-=======
 import { Modal, Portal, List, TextInput as PaperInput } from 'react-native-paper';
 
->>>>>>> dda52351399c04cfb5ba21a994135197d3344ba9
 import InfoCard from '../components/InfoCard';
 import { AppButton } from '../components/button';
 import ScreenHeader from '../components/ScreenHeader';
@@ -244,3 +240,4 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
 });
+
