@@ -4,17 +4,18 @@ import Login from "../mobile/screens/Login.js"; // Adjust the path if needed
 import Welcome from "../mobile/screens/Welcome.js"; // Adjust the path if needed
 import SignUp from "../mobile/screens/SignUp.js"; // Adjust the path if needed
 import Profile from "../mobile/screens/Profile.js"; // Adjust the path if needed
+import Appointments from "../mobile/screens/Appointments.js"; // Adjust the path if needed
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Provider as PaperProvider, DefaultTheme } from "react-native-paper";
-
-// import CardAppointmentScreen from "./screens/Appointments.js";
-import PrintPagesScreen from "./screens/PrintPages.js";
+import CreatePassword from "./screens/CreatePassword.js";
+import CardAppointmentScreen from "./screens/Appointments.js";
+import EditProfile from "./screens/EditProfile.js";
 
 const theme = {
   ...DefaultTheme,
-  roundness: 5,
+  roundness: 10,
 };
 
 const Stack = createNativeStackNavigator();
@@ -26,14 +27,39 @@ export default function App() {
         <View style={styles.container}>
           <NavigationContainer>
             <Stack.Navigator
-              initialRouteName="PrintPages"
-              screenOptions={{ headerShown: false}}
+              initialRouteName="Welcome"
+              screenOptions={{ headerShown: false }}
             >
-              <Stack.Screen name="PrintPages" component={PrintPagesScreen} />
-              <Stack.Screen name="Login" component={Login} options={{title: "Login"}}/>
-              <Stack.Screen name="SignUp" component={SignUp} options={{title: "SignUp"}}/>
-              <Stack.Screen name="Profile" component={Profile} options={{title: "Profile"}}/>
-              {/* <Stack.Screen name="CardAppointment" component={CardAppointmentScreen} options={{title: "Card Appointment"}}/> */}
+              <Stack.Screen name="Welcome" component={Welcome} />
+              <Stack.Screen
+                name="Login"
+                component={Login}
+                options={{ title: "Login" }}
+              />
+              <Stack.Screen
+                name="SignUp"
+                component={SignUp}
+                options={{ title: "SignUp" }}
+              />
+              <Stack.Screen
+                name="Profile"
+                component={Profile}
+                options={{ title: "Profile" }}
+              />
+
+              <Stack.Screen name="EditProfile" component={EditProfile} />
+
+              <Stack.Screen
+                name="CreatePassword"
+                component={CreatePassword}
+                options={{ title: "CreatePassword" }}
+              />
+
+              <Stack.Screen
+                name="Appointments"
+                component={Appointments}
+                options={{ title: "Appointments" }}
+              />
 
               {/* <SafeAreaView style={styles.container}> */}
               {/* <Login /> */}

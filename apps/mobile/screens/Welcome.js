@@ -4,7 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { TextInput as PaperInput } from "react-native-paper";
 import { Text as PaperText } from "react-native-paper";
 import { StyleSheet, Image } from "react-native";
-import { AppButton } from "../components/button.js";
+import { AppButton } from "../components/MobileButton.js";
 
 export default function Welcome({ navigation }) {
   return (
@@ -60,8 +60,8 @@ export default function Welcome({ navigation }) {
           >
             Log in
           </AppButton>
-          {/* ✅ Appointment Button
-          <AppButton
+          {/* ✅ Appointment Button */}
+          {/* <AppButton
             style={[{ width: 150 }]}
             onPress={() => navigation.navigate("CardAppointment")}
           >
@@ -116,12 +116,13 @@ const styles = StyleSheet.create({
   welcomeText: {
     textAlign: "center",
     marginTop: 40,
-    marginBottom: 40,
+    // marginBottom: 0,
   },
 
   welcomeButtonContainer: {
     flexDirection: "row",
     justifyContent: "center",
     gap: 30,
+    marginBottom: 60
   },
 });
