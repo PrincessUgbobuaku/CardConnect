@@ -14,7 +14,7 @@ import PrintPagesScreen from "./screens/PrintPages.js";
 
 const theme = {
   ...DefaultTheme,
-  roundness: 5,
+  roundness: 10,
 };
 
 const Stack = createNativeStackNavigator();
@@ -26,14 +26,25 @@ export default function App() {
         <View style={styles.container}>
           <NavigationContainer>
             <Stack.Navigator
-              initialRouteName="PrintPages"
-              screenOptions={{ headerShown: false}}
+              initialRouteName="Welcome"
+              screenOptions={{ headerShown: false }}
             >
-              <Stack.Screen name="PrintPages" component={PrintPagesScreen} />
-              <Stack.Screen name="Login" component={Login} options={{title: "Login"}}/>
-              <Stack.Screen name="SignUp" component={SignUp} options={{title: "SignUp"}}/>
-              <Stack.Screen name="Profile" component={Profile} options={{title: "Profile"}}/>
-              {/* <Stack.Screen name="CardAppointment" component={CardAppointmentScreen} options={{title: "Card Appointment"}}/> */}
+              <Stack.Screen name="Welcome" component={Welcome} />
+              <Stack.Screen
+                name="Login"
+                component={Login}
+                options={{ title: "Login" }}
+              />
+              <Stack.Screen
+                name="SignUp"
+                component={SignUp}
+                options={{ title: "SignUp" }}
+              />
+              <Stack.Screen
+                name="Profile"
+                component={Profile}
+                options={{ title: "Profile" }}
+              />
 
               {/* <SafeAreaView style={styles.container}> */}
               {/* <Login /> */}

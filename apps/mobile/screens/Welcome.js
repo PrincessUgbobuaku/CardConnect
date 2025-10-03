@@ -4,7 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { TextInput as PaperInput } from "react-native-paper";
 import { Text as PaperText } from "react-native-paper";
 import { StyleSheet, Image } from "react-native";
-import { AppButton } from "../components/button.js";
+import { AppButton } from "../components/MobileButton.js";
 
 export default function Welcome({ navigation }) {
   return (

@@ -12,7 +12,7 @@ export function AppButton({ style, children, onPress, ...props }) {
       // loading="true"
       // onPress={() => console.log("Pressed")}
       style={[
-        { borderRadius: 10 },
+        { borderRadius: 50 },
       ]}
     >
       {children}
