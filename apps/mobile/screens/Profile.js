@@ -1,55 +1,131 @@
-// screens/Profile.js
-import React from "react";
-import { ScrollView, View, StyleSheet, Image } from "react-native";
+import React, { useEffect, useState } from "react";
+import { ScrollView, View, StyleSheet, ActivityIndicator, TouchableOpacity } from "react-native";
 import { Text, Avatar } from "react-native-paper";
 import InfoCard from "../components/InfoCard";
 import InfoRow from "../components/InfoRow";
 import { AppButton } from "../components/MobileButton";
+import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect } from "@react-navigation/native";
+import { MaterialIcons } from "@expo/vector-icons";
 
 export default function Profile() {
+  const navigation = useNavigation();
+
+  const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Replace with actual student number, or get it dynamically
+  const studentNumber = "STU000002";
+
+  const fetchProfile = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(
+        `http://192.168.101.106:9091/api/profile/${studentNumber}`
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch profile");
+      }
+      const data = await response.json();
+      setProfile(data);
+      setError(null);
+    } catch (err) {
+      setError(err.message || "Error fetching profile");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchProfile();
+    }, [])
+  );
+
+  if (loading) {
+    return (
+      <View
+        style={[
+          styles.container,
+          { justifyContent: "center", alignItems: "center" },
+        ]}
+      >
+        <ActivityIndicator size="large" color="#145DA0" />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View
+        style={[
+          styles.container,
+          { justifyContent: "center", alignItems: "center" },
+        ]}
+      >
+        <Text style={{ color: "red" }}>{error}</Text>
+      </View>
+    );
+  }
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      {/* Top Section with Blue Header */}
-      {/* <View style={styles.headerContainer}> */}
-      {/* <Avatar.Image
-        size={90}
-        source={require("../../assets/profile-photo.png")}
-        style={styles.avatar}
-      /> */}
-
-      {/* </View> */}
       <View style={styles.topBackground}></View>
-      {/* Info Sections */}
+      {/* Custom Back Button */}
+      <TouchableOpacity
+        onPress={() => navigation.goBack()}
+        style={styles.backButton}
+      >
+        <MaterialIcons name="arrow-back" size={24} color="#000" />
+      </TouchableOpacity>
+
       <View style={styles.profileInfoContainer}>
         <View style={styles.profileInfoTopSection}>
           <View style={styles.avatarContainer}>
             <Avatar.Image
               size={90}
-              source={require("../assets/profile-photo.png")}
-              theme={{ colors: { primary: "grey" } }} // overrides purple
+              source={require("../assets/headshot.jpg")}
+              theme={{ colors: { primary: "grey" } }}
               style={styles.avatar}
             />
           </View>
           <View style={styles.profileContainer}>
-            <Text style={styles.name}>Matthew Tanner Smith</Text>
-            <Text style={styles.studentId}>230087654</Text>
-            <AppButton style={styles.editButton}>Edit profile</AppButton>
+            <Text style={styles.name}>
+              {profile.firstName} {profile.lastName}
+            </Text>
+            <Text style={styles.studentId}>{profile.userId}</Text>
+            <AppButton
+              style={styles.editButton}
+              onPress={() => navigation.navigate("EditProfile")}
+            >
+              Edit Profile
+            </AppButton>
           </View>
         </View>
 
         <InfoCard title="Personal Information">
-          <InfoRow label="Full name" value="Matthew Tanner Smith" />
-          <InfoRow label="Student ID" value="230087654" />
-          <InfoRow label="Email" value="230087654@mycput.ac.za" />
-          <InfoRow label="Phone" value="067 455 7777" />
-          <InfoRow label="Gender" value="Male" />
-          <InfoRow label="Date of Birth" value="4 April 2000" />
+          <InfoRow
+            label="Full name"
+            value={`${profile.firstName} ${profile.lastName}`}
+          />
+          <InfoRow label="Student ID" value={profile.userId} />
+          <InfoRow label="Email" value={profile.email} />
+          <InfoRow label="Phone" value={profile.contactNumber} />
+          <InfoRow
+            label="Gender"
+            value={profile.gender === "M" ? "Male" : "Female"}
+          />
+          <InfoRow
+            label="Date of Birth"
+            value={new Date(profile.dateOfBirth).toLocaleDateString()}
+          />
         </InfoCard>
 
         <InfoCard title="Academic Information">
-          <InfoRow label="Department" value="Informatics & Design" />
-          <InfoRow label="Year of study" value="2" />
-          <InfoRow label="Job title" value="Student" />
+          <InfoRow label="Department" value={profile.department} />
+          <InfoRow label="Year of study" value={profile.yearOfStudy} />
+          <InfoRow label="Job title" value={profile.role} />
           <InfoRow label="Card status" value="Active" />
         </InfoCard>
 
@@ -76,33 +152,34 @@ const styles = StyleSheet.create({
     height: 150,
   },
 
-  headerContainer: {
-    backgroundColor: "#145DA0",
-    paddingTop: 60,
-    paddingBottom: 100, // more bottom space for overlap
-    alignItems: "center",
-    borderBottomLeftRadius: 150,
-    borderBottomRightRadius: 150,
-    position: "relative",
-    zIndex: 1,
-  },
-
   avatarContainer: {
     position: "absolute",
-    top: "-60", // push it halfway into the red
+    top: "-60",
     zIndex: 2,
     borderRadius: 100,
     elevation: 4,
   },
 
   avatar: {
-    backgroundColor: "transparent", // remove internal bg if needed
+    backgroundColor: "transparent",
+  },
+
+  profileInfoContainer: {
+    padding: 20,
+    backgroundColor: "#F5F2F2",
+    borderTopLeftRadius: 50,
+    borderTopRightRadius: 50,
+  },
+
+  profileInfoTopSection: {
+    flexDirection: "column",
+    alignItems: "center",
   },
 
   profileContainer: {
     flexDirection: "column",
     alignItems: "center",
-    marginTop: 40, // space for the avatar
+    marginTop: 40,
     marginBottom: 40,
   },
 
@@ -116,21 +193,17 @@ const styles = StyleSheet.create({
     color: "black",
     marginBottom: 10,
   },
+
   editButton: {
     marginTop: 10,
     width: 140,
   },
-  profileInfoContainer: {
-    padding: 20,
-    backgroundColor: "#F5F2F2",
-    borderTopLeftRadius: 50,
-    borderTopRightRadius: 50,
-    borderBottomLeftRadius: 0,
-    borderBottomLeftRadius: 0,
-    // margintop: 300,
-  },
-  profileInfoTopSection: {
-    flexDirection: "column",
-    alignItems: "center",
+
+  backButton: {
+    position: "absolute",
+    top: 50,
+    left: 20,
+    zIndex: 10,
+    padding: 5,
   },
 });

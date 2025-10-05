@@ -1,5 +1,8 @@
 import { StatusBar } from "expo-status-bar";
-import { TextInput as PaperInput, Text as PaperText } from "react-native-paper";
+import { TextInput as PaperInput } from "react-native-paper";
+import { Text as PaperText } from "react-native-paper";
+import { AppButton } from "../components/MobileButton.js";
+
 import {
   StyleSheet,
   Text,
@@ -8,33 +11,54 @@ import {
   Alert,
   TouchableOpacity,
 } from "react-native";
+
 import { useState } from "react";
 import { MaterialIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import { AppButton } from "../components/MobileButton.js"; // Import your custom button
 
-export default function Login({ navigation }) {
-  const [studentNumber, setStudentNumber] = useState("");
+export default function CreatePassword({ navigation, route }) {
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [secureText, setSecureText] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const handleLogin = async () => {
+  const { userId } = route.params || {};
+
+  const handleCreatePassword = async () => {
     setLoading(true);
     setError(null);
 
+    if (!password || !confirmPassword) {
+      setError("Both fields are required");
+      setLoading(false);
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      setLoading(false);
+      return;
+    }
+
+    if (!userId) {
+      setError("Missing user ID");
+      setLoading(false);
+      return;
+    }
+
     try {
       const response = await fetch(
-        "http://192.168.101.106:9091/api/user-accounts/login",
+        "http://192.168.101.106:9091/api/user-accounts/signup",
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            email: studentNumber,
+            userId: userId,
             password: password,
+            confirmPassword: confirmPassword,
           }),
         }
       );
@@ -49,22 +73,20 @@ export default function Login({ navigation }) {
       }
 
       if (!response.ok) {
-        setError(data?.message || data || "Login failed");
+        setError(
+          typeof data === "string"
+            ? data
+            : data?.message || JSON.stringify(data) || "Failed to set password"
+        );
         setLoading(false);
         return;
       }
 
-      if (data?.token) {
-        console.log("Token:", data.token);
-        // Store token, navigate, etc.
-      }
-
       setLoading(false);
-
-      Alert.alert("Success", "Login successful!", [
+      Alert.alert("Success", "Password created successfully!", [
         {
-          text: "OK",
-          onPress: () => navigation.navigate("Profile"),
+          text: "Login",
+          onPress: () => navigation.navigate("Login"),
         },
       ]);
     } catch (err) {
@@ -76,7 +98,7 @@ export default function Login({ navigation }) {
   return (
     <LinearGradient
       colors={["#145DA0", "#0C2D48"]}
-      style={styles.loginContainer}
+      style={styles.container}
     >
       <StatusBar style="light" />
 
@@ -96,67 +118,59 @@ export default function Login({ navigation }) {
             source={require("../assets/logo.png")}
             style={styles.logoImage}
           />
-          <PaperText variant="headlineLarge" style={styles.loginText}>
-            Log in to your CPUT Card Account
+          <PaperText variant="headlineLarge" style={styles.titleText}>
+            Create Your Password
           </PaperText>
-          <PaperText style={styles.subText}>Secure Access Portal</PaperText>
+          <PaperText style={styles.subText}>
+            For Secure Access to Your CPUT Card
+          </PaperText>
         </View>
 
         {/* Card */}
         <View style={styles.card}>
           <PaperInput
-            label="Student email"
-            placeholder="Enter your student email"
-            mode="outlined"
-            style={styles.inputText}
-            theme={{ colors: { primary: "#145DA0" } }}
-            selectionColor="orange"
-            cursorColor="orange"
-            value={studentNumber}
-            onChangeText={setStudentNumber}
-          />
-          <PaperInput
             label="Password"
             placeholder="Enter your password"
             mode="outlined"
             style={styles.inputText}
-            onChangeText={setPassword}
             secureTextEntry={secureText}
+            onChangeText={setPassword}
+            value={password}
             right={
               <PaperInput.Icon
                 icon={secureText ? "eye-off" : "eye"}
                 onPress={() => setSecureText(!secureText)}
               />
             }
+            theme={{ colors: { primary: "#145DA0" } }}
             selectionColor="orange"
             cursorColor="orange"
-            value={password}
+          />
+
+          <PaperInput
+            label="Confirm Password"
+            placeholder="Re-enter your password"
+            mode="outlined"
+            style={styles.inputText}
+            secureTextEntry={secureText}
+            onChangeText={setConfirmPassword}
+            value={confirmPassword}
+            theme={{ colors: { primary: "#145DA0" } }}
+            selectionColor="orange"
+            cursorColor="orange"
           />
 
           {error && <Text style={styles.errorText}>{error}</Text>}
 
-          {/* Replace Animated Button with AppButton */}
           <View style={styles.buttonContainer}>
             <AppButton
-              onPress={handleLogin}
+              onPress={handleCreatePassword}
               disabled={loading}
               style={{ width: "100%" }}
             >
-              {loading ? "Logging in..." : "Login"}
+              {loading ? "Submitting..." : "Create Password"}
             </AppButton>
           </View>
-
-          {/* Forgot Password */}
-          <TouchableOpacity
-            onPress={() =>
-              Alert.alert("Forgot Password", "Redirect to recovery.")
-            }
-          >
-            <Text style={styles.clickHere}>
-              Forgot password?{" "}
-              <Text style={styles.clickHereBold}>Click here</Text>
-            </Text>
-          </TouchableOpacity>
         </View>
       </View>
     </LinearGradient>
@@ -164,16 +178,8 @@ export default function Login({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  loginContainer: {
+  container: {
     flex: 1,
-    backgroundColor: "#145DA0",
-  },
-
-  centerContent: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: 20,
   },
 
   backButton: {
@@ -182,6 +188,13 @@ const styles = StyleSheet.create({
     left: 20,
     zIndex: 2,
     padding: 5,
+  },
+
+  centerContent: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 20,
   },
 
   header: {
@@ -202,7 +215,7 @@ const styles = StyleSheet.create({
     elevation: 10,
   },
 
-  loginText: {
+  titleText: {
     textAlign: "center",
     color: "#ffffff",
     fontWeight: "700",
@@ -244,16 +257,5 @@ const styles = StyleSheet.create({
   buttonContainer: {
     width: "100%",
     alignItems: "center",
-  },
-
-  clickHere: {
-    fontSize: 14,
-    color: "#666",
-    marginTop: 10,
-  },
-
-  clickHereBold: {
-    fontWeight: "bold",
-    color: "#145DA0",
   },
 });
