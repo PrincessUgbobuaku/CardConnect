@@ -13,6 +13,9 @@ import CreatePassword from "./screens/CreatePassword.js";
 import CardAppointmentScreen from "./screens/Appointments.js";
 import EditProfile from "./screens/EditProfile.js";
 
+// import CardAppointmentScreen from "./screens/Appointments.js";
+import PrintPagesScreen from "./screens/PrintPages.js";
+
 const theme = {
   ...DefaultTheme,
   roundness: 10,
