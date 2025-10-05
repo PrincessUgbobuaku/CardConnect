@@ -3,12 +3,16 @@ package com.cardconnect.backend.controller;
 import com.cardconnect.backend.domain.Student;
 import com.cardconnect.backend.domain.UserAccount;
 import com.cardconnect.backend.dto.*;
+import com.cardconnect.backend.security.JWTUtil;
 import com.cardconnect.backend.service.IStudentService;
 import com.cardconnect.backend.service.IUserAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.security.core.Authentication;
+
+import java.util.Collections;
 import java.util.Optional;
 
 @RestController
@@ -23,6 +27,9 @@ public class AuthController {
         this.userAccountService = userAccountService;
         this.studentService = studentService;
     }
+
+    @Autowired
+    private JWTUtil jwtUtil;
 
     // 1. Verify Student (signup step 1)
     @PostMapping("/verify-student")
@@ -78,12 +85,59 @@ public class AuthController {
     // 3. Login
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+
         try {
+
             UserAccount account = userAccountService.login(request.getEmail(), request.getPassword());
-            return ResponseEntity.ok(account);
+
+            System.out.println("=== DEBUG: Login Request ===");
+            System.out.println("Request Email: " + request.getEmail());
+            System.out.println("Request Password: " + request.getPassword());
+            System.out.println("Account Email: " + account.getEmail());
+            System.out.println("account.getUser(): " + account.getUser());
+            System.out.println("account.getUser().getUserId(): " + account.getUser().getUserId());
+            System.out.println("=============================");
+            // UserAccount account = userAccountService.login(request.getEmail(),
+            // request.getPassword());
+
+            // Generate token
+            String token = jwtUtil.generateToken(account.getUser().getUserId()); // 👈 Use student number
+
+            System.out.println("✅ Login successful");
+            System.out.println("Generated JWT Token: " + token);
+            System.out.println("JWT Subject (userId): " + jwtUtil.extractUserId(token));
+            System.out.println("Student number from User: " + account.getUser().getUserId());
+            System.out.println("Email from UserAccount: " + account.getEmail());
+            // Prepare response
+            LoginResponse response = new LoginResponse(
+                    token,
+                    account.getEmail(),
+                    account.getUser().getUserId(),
+                    account.getUser().getFirstName(),
+                    account.getUser().getLastName(),
+                    account.getUser().getRole());
+
+            return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
             return ResponseEntity.status(401).body("Email or password is incorrect.");
         }
+
+        // try {
+        // UserAccount account = userAccountService.login(request.getEmail(),
+        // request.getPassword());
+        // return ResponseEntity.ok(Collections.singletonMap("token",
+        // account.getToken()));
+        // } catch (RuntimeException e) {
+        // return ResponseEntity.status(401).body("Email or password is incorrect.");
+        // }
+
+        // try {
+        // UserAccount account = userAccountService.login(request.getEmail(),
+        // request.getPassword());
+        // return ResponseEntity.ok(account);
+        // } catch (RuntimeException e) {
+        // return ResponseEntity.status(401).body("Email or password is incorrect.");
+        // }
     }
 
     // 4. Change Password (optional)

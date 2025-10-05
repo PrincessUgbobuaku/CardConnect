@@ -8,7 +8,7 @@ import com.cardconnect.backend.util.Helper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
+import com.cardconnect.backend.security.JWTUtil;
 import java.util.List;
 
 @Service
@@ -20,12 +20,15 @@ public class UserAccountService implements IUserAccountService {
 
     @Autowired
     public UserAccountService(IUserAccountRepository userAccountRepository,
-                              IUserRepository userRepository,
-                              PasswordEncoder passwordEncoder) {
+            IUserRepository userRepository,
+            PasswordEncoder passwordEncoder) {
         this.userAccountRepository = userAccountRepository;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
+
+    @Autowired
+    private JWTUtil jwtUtil;
 
     @Override
     public boolean accountExistsForUserId(String userId) {
@@ -68,7 +71,22 @@ public class UserAccountService implements IUserAccountService {
 
         return account;
     }
-    
+
+    // @Override
+    // public UserAccount login(String email, String rawPassword) {
+    // UserAccount account = userAccountRepository.findByEmail(email)
+    // .orElseThrow(() -> new RuntimeException("Email or password is incorrect"));
+
+    // if (!passwordEncoder.matches(rawPassword, account.getPasswordHash())) {
+    // throw new RuntimeException("Email or password is incorrect");
+    // }
+
+    // // Generate JWT
+    // String token = jwtUtil.generateToken(email);
+    // account.setToken(token); // this won't persist to DB, just returned
+
+    // return account;
+    // }
 
     @Override
     public UserAccount changePassword(String email, String oldPassword, String newPassword) {
