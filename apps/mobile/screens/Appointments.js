@@ -10,9 +10,10 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Modal, Portal, List, TextInput as PaperInput } from 'react-native-paper';
+
 import InfoCard from '../components/InfoCard';
-import { AppButton } from '../components/button';
-import ScreenHeader from '../components/ScreenHeader';
+import { AppButton } from '../components/MobileButton'; // Custom button component
+import ScreenHeader from '../components/ScreenHeader'; // Custom header component
 
 export default function CardAppointmentScreen() {
   const [date, setDate] = useState(new Date());
@@ -239,3 +240,4 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
 });
+

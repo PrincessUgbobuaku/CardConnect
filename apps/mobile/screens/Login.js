@@ -1,189 +1,259 @@
 import { StatusBar } from "expo-status-bar";
-import Icon from "react-native-vector-icons/Ionicons";
-import { TextInput as PaperInput } from "react-native-paper";
-import { Button as PaperButton } from "react-native-paper";
-import { Text as PaperText } from "react-native-paper";
-import { AppButton } from "../components/button.js";
-
+import { TextInput as PaperInput, Text as PaperText } from "react-native-paper";
 import {
   StyleSheet,
   Text,
   View,
   Image,
-  Button,
-  TextInput,
-  Pressable,
+  Alert,
   TouchableOpacity,
 } from "react-native";
-
 import { useState } from "react";
+import { MaterialIcons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
+import { AppButton } from "../components/MobileButton.js"; // Import your custom button
 
-export default function Login() {
-  const [password, setPassword] = useState(""); //Stores the password typed by the user.
-  const [secureText, setSecureText] = useState(true); // Controls visibility of password (true or false)
+export default function Login({ navigation }) {
+  const [studentNumber, setStudentNumber] = useState("");
+  const [password, setPassword] = useState("");
+  const [secureText, setSecureText] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const handleLogin = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch(
+        "http://192.168.101.106:9091/api/user-accounts/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: studentNumber,
+            password: password,
+          }),
+        }
+      );
+
+      const textResponse = await response.text();
+      let data;
+
+      try {
+        data = JSON.parse(textResponse);
+      } catch {
+        data = textResponse;
+      }
+
+      if (!response.ok) {
+        setError(data?.message || data || "Login failed");
+        setLoading(false);
+        return;
+      }
+
+      if (data?.token) {
+        console.log("Token:", data.token);
+        // Store token, navigate, etc.
+      }
+
+      setLoading(false);
+
+      Alert.alert("Success", "Login successful!", [
+        {
+          text: "OK",
+          onPress: () => navigation.navigate("Profile"),
+        },
+      ]);
+    } catch (err) {
+      setLoading(false);
+      setError("Network error: " + err.message);
+    }
+  };
 
   return (
-    <View style={styles.loginContainer}>
-      <StatusBar style="dark" />
+    <LinearGradient
+      colors={["#145DA0", "#0C2D48"]}
+      style={styles.loginContainer}
+    >
+      <StatusBar style="light" />
 
-      {/* top image */}
-      {/* <View style={styles.imageContainer}>
-        <Image
-          source={require("../../assets/blue-background-top.png")}
-          style={styles.topImage}
-          //style={styles.backgroundImage}
-        />
-      </View> */}
-      <View style={styles.loginHeaderContainer}>
-        <View style={styles.logoImageContainer}>
+      {/* Back Button */}
+      <TouchableOpacity
+        onPress={() => navigation.goBack()}
+        style={styles.backButton}
+      >
+        <MaterialIcons name="arrow-back" size={24} color="#fff" />
+      </TouchableOpacity>
+
+      {/* Centered Content */}
+      <View style={styles.centerContent}>
+        {/* Header */}
+        <View style={styles.header}>
           <Image
             source={require("../assets/logo.png")}
             style={styles.logoImage}
           />
-        </View>
-        <View>
-          <PaperText variant="headlineMedium" style={styles.loginText}>
+          <PaperText variant="headlineLarge" style={styles.loginText}>
             Log in to your CPUT Card Account
           </PaperText>
+          <PaperText style={styles.subText}>Secure Access Portal</PaperText>
         </View>
-        <View>
-          <PaperText>Secure Access Portal</PaperText>
+
+        {/* Card */}
+        <View style={styles.card}>
+          <PaperInput
+            label="Student email"
+            placeholder="Enter your student email"
+            mode="outlined"
+            style={styles.inputText}
+            theme={{ colors: { primary: "#145DA0" } }}
+            selectionColor="orange"
+            cursorColor="orange"
+            value={studentNumber}
+            onChangeText={setStudentNumber}
+          />
+          <PaperInput
+            label="Password"
+            placeholder="Enter your password"
+            mode="outlined"
+            style={styles.inputText}
+            onChangeText={setPassword}
+            secureTextEntry={secureText}
+            right={
+              <PaperInput.Icon
+                icon={secureText ? "eye-off" : "eye"}
+                onPress={() => setSecureText(!secureText)}
+              />
+            }
+            selectionColor="orange"
+            cursorColor="orange"
+            value={password}
+          />
+
+          {error && <Text style={styles.errorText}>{error}</Text>}
+
+          {/* Replace Animated Button with AppButton */}
+          <View style={styles.buttonContainer}>
+            <AppButton
+              onPress={handleLogin}
+              disabled={loading}
+              style={{ width: "100%" }}
+            >
+              {loading ? "Logging in..." : "Login"}
+            </AppButton>
+          </View>
+
+          {/* Forgot Password */}
+          <TouchableOpacity
+            onPress={() =>
+              Alert.alert("Forgot Password", "Redirect to recovery.")
+            }
+          >
+            <Text style={styles.clickHere}>
+              Forgot password?{" "}
+              <Text style={styles.clickHereBold}>Click here</Text>
+            </Text>
+          </TouchableOpacity>
         </View>
       </View>
-      {/* input fields */}
-      <View style={styles.inputContainer}>
-        <PaperInput
-          label="Student number"
-          placeholder="Enter your student number"
-          mode="outlined"
-          style={styles.inputText}
-          theme={{ colors: { primary: "#145DA0" } }}
-          selectionColor="orange"
-          cursorColor="orange"
-        />
-        <PaperInput
-          label="Password"
-          placeholder="Enter your password"
-          mode="outlined"
-          style={styles.inputText}
-          // theme={{ colors: { primary: "#145DA0" } }}
-          onChangeText={(text) => setPassword(text)}
-          secureTextEntry={secureText} // Hides/shows text
-          right={
-            <PaperInput.Icon
-              icon={secureText ? "eye-off" : "eye"} //icon switches
-              onPress={() => setSecureText(!secureText)} // Toggle visibility
-            />
-          }
-          selectionColor="orange"
-          cursorColor="orange"
-        />
-      </View>
-
-      <View style={styles.buttonContainer}>
-        <AppButton style={[{ width: "150" }]}>Login</AppButton>
-      </View>
-
-      <View style={styles.forgotPasswordContainer}>
-        <PaperText variant="bodyMedium" style={styles.forgotPassword}>
-          Forgot password?{" "}
-          <PaperText variant="bodyMedium" style={styles.bottomImage}>
-            CLICK HERE
-          </PaperText>
-        </PaperText>
-      </View>
-
-      {/* <View style={styles.imageContainer}>
-        <Image
-          source={require("../../assets/blue-background-bottom.png")}
-          style={styles.bottomImage}
-        />
-      </View> */}
-    </View>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
   loginContainer: {
     flex: 1,
-    backgroundColor: "#F5F2F2",
-    width: "100%",
-    flexDirection: "column",
+    backgroundColor: "#145DA0",
   },
 
-  // imageContainer: {
-  //   width: "100%",
-  //   marginBottom: 50,
-  // },
-
-  // topImage: {
-  //   width: "100%",
-  //   height: 150,
-  // },
-
-  loginHeaderContainer: {
-    paddingTop: 60,
-    paddingBottom: 40,
-    flexDirection: "column",
+  centerContent: {
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#145DA0",
-    gap: 20,
-    borderBottomLeftRadius: 250, // 👈 add this
-    borderBottomRightRadius: 250,
-    width: 600, // 👈 add this
-    alignSelf: "center", // 👈 add this
-    marginBottom: 80,
+    paddingHorizontal: 20,
   },
 
-  logoImageContainer: {
-    // alignItems: "center",
+  backButton: {
+    position: "absolute",
+    top: 50,
+    left: 20,
+    zIndex: 2,
+    padding: 5,
+  },
+
+  header: {
+    alignItems: "center",
+    marginBottom: 20,
   },
 
   logoImage: {
-    width: 100, // your desired width
-    height: 100, // your desired height
-    resizeMode: "contain", // optional to keep aspect ratio
+    width: 90,
+    height: 90,
+    resizeMode: "contain",
+    marginBottom: 15,
+    borderRadius: 20,
+    shadowColor: "#ffffff",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.8,
+    shadowRadius: 10,
+    elevation: 10,
   },
 
   loginText: {
     textAlign: "center",
-    paddingLeft: 150,
-    paddingRight: 150,
+    color: "#ffffff",
     fontWeight: "700",
-    color: "#000000",
+    paddingBottom: 30,
+    fontSize: 27,
   },
 
-  inputContainer: {
-    paddingLeft: 35,
-    paddingRight: 35,
-    gap: 40,
-    marginBottom: 100,
-    
+  subText: {
+    color: "#e0e0e0",
+    fontSize: 14,
+    marginTop: 5,
+  },
+
+  card: {
+    width: "100%",
+    backgroundColor: "#ffffffee",
+    padding: 25,
+    borderRadius: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 6,
+    gap: 20,
+    alignItems: "center",
   },
 
   inputText: {
-    paddingLeft: 10,
-    fontStyle: "normal",
-    // borderRadius: 0,
+    fontSize: 16,
+    backgroundColor: "#fff",
+    width: "100%",
   },
 
-  eyeIcon: {
-    marginRight: 20,
-    marginTop: 10,
+  errorText: {
+    color: "red",
+    textAlign: "center",
   },
 
   buttonContainer: {
+    width: "100%",
     alignItems: "center",
-    marginBottom: 100,
   },
 
-  forgotPasswordContainer: {
-    alignItems: "center", // centers horizontally
-    justifyContent: "center", // centers vertically if needed
+  clickHere: {
+    fontSize: 14,
+    color: "#666",
+    marginTop: 10,
   },
 
-  forgotPassword: {
-    textAlign: "center",
+  clickHereBold: {
+    fontWeight: "bold",
+    color: "#145DA0",
   },
 });

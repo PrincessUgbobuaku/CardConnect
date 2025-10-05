@@ -1,212 +1,256 @@
 import { StatusBar } from "expo-status-bar";
-import { View, StyleSheet, Image, Linking } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Image,
+  Alert,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
 import { Text as PaperText } from "react-native-paper";
-import { TextInput as PaperInput } from "react-native-paper";
-import { Checkbox as PaperCheckBox } from "react-native-paper";
 import { useState } from "react";
 import ConsentCheckboxes from "../components/checkbox.js";
-import { AppButton } from "../components/button.js";
+import { AppButton } from "../components/MobileButton.js";
 import AppTextInput from "../components/TextInput.js";
+import { MaterialIcons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
 
-export default function SignUp() {
-  const [password, setPassword] = useState(""); //Stores the password typed by the user.
-  const [secureText, setSecureText] = useState(true); // Controls visibility of password (true or false)
-
+export default function SignUp({ navigation }) {
+  const [idNumber, setIdNumber] = useState("");
+  const [studentNumber, setStudentNumber] = useState("");
+  const [loading, setLoading] = useState(false);
   const [consentChecked, setConsentChecked] = useState(false);
   const [privacyChecked, setPrivacyChecked] = useState(false);
 
-  const [studentNumber, setStudentNumber] = useState("");
+  const agreedToTerms = consentChecked && privacyChecked;
+
+  const handleVerify = async () => {
+    if (!studentNumber || !idNumber) {
+      Alert.alert("Missing Info", "Please fill in all fields.");
+      return;
+    }
+
+    if (!agreedToTerms) {
+      Alert.alert(
+        "Consent Required",
+        "Please accept terms and privacy policy."
+      );
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await fetch(
+        "http://192.168.101.106:9091/api/user-accounts/verify-student",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            studentNumber,
+            identificationNumber: idNumber,
+            agreedToTerms,
+          }),
+        }
+      );
+
+      const textResponse = await response.text();
+
+      if (!response.ok) {
+        const isAccountExists =
+          textResponse.includes("already have an account") ||
+          textResponse.toLowerCase().includes("please log in");
+
+        Alert.alert("Verification Failed", textResponse, [
+          {
+            text: "OK",
+            onPress: () => {
+              if (isAccountExists) navigation.navigate("Login");
+            },
+          },
+        ]);
+
+        setLoading(false);
+        return;
+      }
+
+      const userId = textResponse.replace(/"/g, "");
+      Alert.alert("Verified", "Student verified successfully.", [
+        {
+          text: "Next",
+          onPress: () =>
+            navigation.navigate("CreatePassword", { userId: userId }),
+        },
+      ]);
+      setLoading(false);
+    } catch (err) {
+      setLoading(false);
+      Alert.alert("Network Error", err.message || "Something went wrong.");
+    }
+  };
 
   return (
-    <View style={styles.signUpContainer}>
-      <StatusBar style="dark" />
+    <LinearGradient colors={["#145DA0", "#0C2D48"]} style={styles.container}>
+      <StatusBar style="light" />
 
-      {/* top image */}
-      {/* <View style={styles.signUpImageContainer}>
-        <Image
-          source={require("../../assets/blue-background-top.png")}
-          style={styles.topImage}
-          //style={styles.backgroundImage}
-        />
-      </View> */}
-      <View style={styles.signUpHeaderContainer}>
-        <View style={styles.logoImageContainer}>
+      {/* Back Button */}
+      <TouchableOpacity
+        onPress={() => navigation.goBack()}
+        style={styles.backButton}
+      >
+        <MaterialIcons name="arrow-back" size={24} color="#fff" />
+      </TouchableOpacity>
+
+      {/* Centered Content */}
+      <KeyboardAvoidingView
+        style={styles.centerContent}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      >
+        {/* Header */}
+        <View style={styles.header}>
           <Image
             source={require("../assets/logo.png")}
             style={styles.logoImage}
           />
+          <PaperText variant="headlineLarge" style={styles.title}>
+            Sign up for your CPUT Card Account
+          </PaperText>
+          <PaperText style={styles.subText}>Secure Access Portal</PaperText>
         </View>
-        <View>
-          <PaperText variant="headlineMedium" style={styles.signUpText}>
-            Sign up for your CPUT Card Account{" "}
+
+        {/* Card */}
+        <View style={styles.card}>
+          <AppTextInput
+            label="Student number"
+            placeholder="Enter your student number"
+            value={studentNumber}
+            onChangeText={setStudentNumber}
+            style={styles.inputText}
+          />
+          <AppTextInput
+            label="ID/Passport Number"
+            placeholder="Enter your SA ID or passport no."
+            value={idNumber}
+            onChangeText={setIdNumber}
+            isPassword={false}
+            style={styles.inputText}
+          />
+
+          <ConsentCheckboxes
+            consentChecked={consentChecked}
+            setConsentChecked={setConsentChecked}
+            privacyChecked={privacyChecked}
+            setPrivacyChecked={setPrivacyChecked}
+          />
+
+          {/* Button */}
+          <View style={styles.buttonContainer}>
+            <AppButton onPress={handleVerify} disabled={loading}>
+              {loading ? "Verifying..." : "Verify me as a CPUT student"}
+            </AppButton>
+          </View>
+
+          {/* Already verified? */}
+          <PaperText style={styles.clickHere}>
+            Already a verified student?{" "}
+            <PaperText
+              style={styles.clickHereBold}
+              onPress={() => navigation.navigate("Login")}
+            >
+              LOGIN
+            </PaperText>
           </PaperText>
         </View>
-        <View>
-          <PaperText>Secure Access Portal</PaperText>
-        </View>
-      </View>
-      {/* <View style={styles.signUpHeaderContainer}>
-        <ScreenHeader text="Sign up for your CPUT Card Account" />
-      </View> */}
-
-      <View style={styles.inputContainer}>
-        <AppTextInput
-          label="Student number"
-          placeholder="Enter your student number"
-          value={studentNumber}
-          onChangeText={setStudentNumber}
-          style={styles.inputText}
-        />
-        <AppTextInput
-          label="ID/Passport Number"
-          placeholder="Enter your SA ID or passport no."
-          value={password}
-          onChangeText={setPassword}
-          isPassword={true}
-          style={styles.inputText}
-        />
-      </View>
-      <View style={styles.checkboxContainer}>
-        <ConsentCheckboxes
-          consentChecked={consentChecked}
-          setConsentChecked={setConsentChecked}
-          privacyChecked={privacyChecked}
-          setPrivacyChecked={setPrivacyChecked}
-        />
-      </View>
-
-      <View style={styles.buttonContainer}>
-        <AppButton style={[{ width: "282" }]}>
-          Verify me as a CPUT student
-        </AppButton>
-      </View>
-
-      <View style={styles.verifiedStudentContainer}>
-        <PaperText variant="bodyMedium" style={styles.verifiedStudent}>
-          Already a verified student?{" "}
-          <PaperText variant="bodyMedium" style={styles.bottomImage}>
-            LOGIN
-          </PaperText>
-        </PaperText>
-      </View>
-
-      {/* <View style={styles.imageContainer}>
-        <Image
-          source={require("../../assets/blue-background-bottom.png")}
-          // style={styles.bottomImage}
-        />
-      </View> */}
-    </View>
+      </KeyboardAvoidingView>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
-  signUpContainer: {
+  container: {
     flex: 1,
-    backgroundColor: "#F5F2F2",
-    width: "100%",
   },
 
-  signUpHeaderContainer: {
-    paddingTop: 60,
-    paddingBottom: 40,
-    flexDirection: "column",
+  centerContent: {
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#145DA0",
-    gap: 20,
-    // borderBottomLeftRadius: 250, // 👈 add this
-    // borderBottomRightRadius: 250,
-    width: 600, // 👈 add this
-    alignSelf: "center", // 👈 add this
-    marginBottom: 60,
-    elevation: 20,
+    paddingHorizontal: 20,
   },
 
-  logoImageContainer: {
-    // alignItems: "center",
+  backButton: {
+    position: "absolute",
+    top: 50,
+    left: 20,
+    zIndex: 2,
+    padding: 5,
+  },
+
+  header: {
+    alignItems: "center",
+    marginBottom: 20,
   },
 
   logoImage: {
-    width: 100, // your desired width
-    height: 100, // your desired height
-    resizeMode: "contain", // optional to keep aspect ratio
+    width: 90,
+    height: 90,
+    resizeMode: "contain",
+    marginBottom: 15,
+    borderRadius: 20,
+    shadowColor: "#ffffff",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.8,
+    shadowRadius: 10,
+    elevation: 10,
   },
 
-  signUpText: {
+  title: {
     textAlign: "center",
-    paddingLeft: 150,
-    paddingRight: 150,
+    color: "#ffffff",
     fontWeight: "700",
-    color: "#000000",
+    paddingBottom: 30,
+    fontSize: 27,
   },
 
-  inputContainer: {
-    paddingLeft: 35,
-    paddingRight: 35,
-    gap: 40,
-    marginBottom: 100,
+  subText: {
+    color: "#e0e0e0",
+    fontSize: 14,
+    marginTop: 5,
   },
 
-  inputText: {
-    paddingLeft: 10,
-    fontStyle: "normal",
-    // borderRadius: 0,
-  },
-
-  // signUpImageContainer: {
-  //   width: "100%",
-  //   marginBottom: 30,
-  // },
-
-  // signUpHeaderContainer: {
-  //   marginBottom: 40,
-  // },
-
-  // topImage: {
-  //   width: "100%",
-  //   height: 150,
-  // },
-
-  // signUpText: {
-  //   textAlign: "center",
-  //   paddingLeft: 60,
-  //   paddingRight: 60,
-  //   fontWeight: "700",
-  //   color: "#000000",
-  // },
-
-  inputContainer: {
-    // paddingLeft: 35,
-    // paddingRight: 35,
-    gap: 40,
-    marginBottom: 50,
-    alignItems: "center",
+  card: {
+    width: "100%",
+    backgroundColor: "#ffffffee",
+    padding: 25,
+    borderRadius: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 6,
+    gap: 20,
+    // alignItems: "flex-start",
   },
 
   inputText: {
-    width: "80%",
-  },
-
-  checkboxContainer: {
-    // paddingLeft: 35,
-    // paddingRight: 35,
-    // gap: 80,
-    marginBottom: 30,
+    width: "100%",
+    backgroundColor: "#fff",
   },
 
   buttonContainer: {
-    alignItems: "center",
-    marginBottom: 60,
+    width: "100%",
+    marginTop: 10,
   },
 
-  verifiedStudentContainer: {
-    alignItems: "center", // centers horizontally
-    justifyContent: "center", // centers vertically if needed
-    // marginBottom: 20,
-  },
-
-  verifiedStudent: {
+  clickHere: {
+    fontSize: 14,
+    color: "#666",
+    marginTop: 10,
     textAlign: "center",
+  },
+
+  clickHereBold: {
+    fontWeight: "bold",
+    color: "#145DA0",
   },
 });
