@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { Text as PaperText } from "react-native-paper";
 import { useState } from "react";
-import ConsentCheckboxes from "../components/Checkbox.js";
+import ConsentCheckboxes from "../components/checkbox.js";
 import { AppButton } from "../components/MobileButton.js";
 import AppTextInput from "../components/TextInput.js";
 import { MaterialIcons } from "@expo/vector-icons";
