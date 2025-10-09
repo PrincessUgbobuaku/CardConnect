@@ -3,7 +3,8 @@ import React, { useState, useContext } from "react";
 import { View, Text, StyleSheet, TextInput, Alert, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import ScreenHeader from "../components/ScreenHeader";
-import { AppButton } from "../components/button";
+// import { AppButton } from "../components/button";
+import { AppButton } from "../components/MobileButton";
 import { CreditsContext } from "../context/CreditsContext";
 
 export default function LoadCreditsScreen() {
