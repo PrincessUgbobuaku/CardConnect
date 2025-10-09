@@ -32,7 +32,7 @@ export default function EditProfile() {
       const token = await AsyncStorage.getItem("token");
       if (!token) throw new Error("No token found. Please log in again.");
 
-      const res = await fetch("http://172.20.10.8:9091/api/profile", {
+      const res = await fetch("http://192.168.101.105:9091/api/profile", {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",

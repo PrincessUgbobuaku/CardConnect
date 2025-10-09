@@ -66,7 +66,7 @@ export default function Profile() {
         return;
       }
 
-      const response = await fetch("http://172.20.10.8:9091/api/profile", {
+      const response = await fetch("http://192.168.101.105:9091/api/profile", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
