@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { Text as PaperText } from "react-native-paper";
 import { useState } from "react";
-import ConsentCheckboxes from "../components/checkbox.js";
+import ConsentCheckboxes from "../components/Checkbox.js";
 import { AppButton } from "../components/MobileButton.js";
 import AppTextInput from "../components/TextInput.js";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -42,7 +42,7 @@ export default function SignUp({ navigation }) {
     setLoading(true);
     try {
       const response = await fetch(
-        "http://172.20.10.8:9091/api/user-accounts/verify-student",
+        "http://192.168.101.105:9091/api/user-accounts/verify-student",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
