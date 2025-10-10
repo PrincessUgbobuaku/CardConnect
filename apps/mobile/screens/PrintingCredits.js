@@ -1,4 +1,4 @@
-// Swatsi Ratia
+// Swatsi Ratia PrntingCredits
 import React, { useState, useContext } from "react";
 import { View, Text, StyleSheet, TextInput, Alert, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
