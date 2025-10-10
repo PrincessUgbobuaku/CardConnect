@@ -1,7 +1,9 @@
 // Swatsi Ratia
 import React, { useState, useContext } from "react";
-import { View, Text, TouchableOpacity, TextInput, Alert, StyleSheet } from "react-native";
+import { View, Text, TextInput, Alert, StyleSheet, ScrollView } from "react-native";
 import { CreditsContext } from "../context/CreditsContext";
+import ScreenHeader from "../components/ScreenHeader";
+import { MobileButton } from "../components/MobileButton";
 
 export default function PrintPagesScreen() {
   const { credits, deductCredits } = useContext(CreditsContext);
@@ -13,10 +15,10 @@ export default function PrintPagesScreen() {
   const [cost, setCost] = useState(0);
 
   const calculateCost = () => {
-    let base = parseFloat(pages || 0) * 0.4; // base cost per page = R0.50
+    let base = parseFloat(pages || 0) * 0.4;
     if (color) base += parseFloat(pages || 0) * 0.3;
-    if (doubleSided) base *= 0.9; // 10% discount for double-sided
-    if (lamination) base += parseFloat(pages || 0) * 1.0; // R1 per page lamination
+    if (doubleSided) base *= 0.9;
+    if (lamination) base += parseFloat(pages || 0) * 1.0;
     setCost(base.toFixed(2));
   };
 
@@ -26,14 +28,11 @@ export default function PrintPagesScreen() {
       Alert.alert("Insufficient Credits", "Please load more printing credits.");
       return;
     }
-
     deductCredits(totalCost);
     Alert.alert(
       "Print Job Sent!",
       `✅ Printer: ${printer}\n🧾 Pages: ${pages}\n🎨 Color: ${color ? "Yes" : "No"}\n📄 Double-sided: ${doubleSided ? "Yes" : "No"}\n✨ Lamination: ${lamination ? "Yes" : "No"}\n💰 Cost: R${totalCost}`
     );
-
-    // reset selections
     setPages("");
     setColor(false);
     setDoubleSided(false);
@@ -42,8 +41,8 @@ export default function PrintPagesScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>🖨️ Print Pages</Text>
+    <ScrollView style={styles.container} contentContainerStyle={{paddingBottom: 40}}>
+      <ScreenHeader text="Print Pages" />
       <Text style={styles.credits}>Available Credits: R{credits.toFixed(2)}</Text>
 
       <TextInput
@@ -55,7 +54,6 @@ export default function PrintPagesScreen() {
         onBlur={calculateCost}
       />
 
-      {/* Printer Selection */}
       <Text style={styles.sectionTitle}>Select Printer:</Text>
       <View style={styles.printerRow}>
         {["Printer 1", "Printer 2"].map((p) => (
@@ -69,7 +67,6 @@ export default function PrintPagesScreen() {
         ))}
       </View>
 
-      {/* Preferences */}
       <Text style={styles.sectionTitle}>Preferences:</Text>
       {[{ label: "Color", value: color, setter: setColor },
         { label: "Double-sided", value: doubleSided, setter: setDoubleSided },
@@ -88,19 +85,14 @@ export default function PrintPagesScreen() {
         </TouchableOpacity>
       ))}
 
-      {/* Cost Display */}
       <View style={styles.costContainer}>
         <Text style={styles.costText}>Estimated Cost: R{cost}</Text>
       </View>
 
-      {/* Print Button */}
-      <TouchableOpacity
-        onPress={handlePrint}
-        style={styles.printButton}
-      >
-        <Text style={styles.printButtonText}>Print</Text>
-      </TouchableOpacity>
-    </View>
+      <MobileButton onPress={handlePrint} style={styles.printButton}>
+        Print
+      </MobileButton>
+    </ScrollView>
   );
 }
 
