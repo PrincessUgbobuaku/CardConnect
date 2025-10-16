@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Link } from "react-router-dom";
 import logo from "../assets/cardconnect-logo.png";
@@ -121,9 +122,7 @@ export default function Welcome() {
           <Link to="/login">
             <button style={buttonStyle}>Log in</button>
           </Link>
-           <Link to="/profile">
-    <button style={buttonStyle}>View Profile</button>
-  </Link>
+           
         </div>
       </main>
 

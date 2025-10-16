@@ -1,10 +1,19 @@
+
+// src/pages/Signup.js
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/cardconnect-logo.png";
 
 export default function Signup() {
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [contactNumber, setContactNumber] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [gender, setGender] = useState("M");
+  const [dateOfBirth, setDateOfBirth] = useState("");
+  const [idType, setIdType] = useState("SA_ID");
+  const [identificationNumber, setIdentificationNumber] = useState("");
   const [acceptPolicy, setAcceptPolicy] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -18,26 +27,47 @@ export default function Signup() {
       return;
     }
 
+    // Create a simple random user ID if backend doesn't generate one automatically
+    const userId = Math.floor(100000000 + Math.random() * 900000000).toString();
+
     try {
-      const response = await fetch("http://localhost:8080/api/auth/signup", {
+      const response = await fetch("http://localhost:8080/api/admin/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({
+          userId,
+          firstName,
+          lastName,
+          contactNumber,
+          gender,
+          dateOfBirth,
+          idType,
+          identificationNumber,
+          agreedToTerms: acceptPolicy,
+          email,
+          password,
+        }),
       });
 
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.message || "Signup failed");
+      let data = {};
+      try {
+        data = await response.json();
+      } catch (err) {
+        data = {};
       }
 
-      const data = await response.json();
-      localStorage.setItem("user", JSON.stringify(data));
+      if (!response.ok) {
+        throw new Error(data.message || data.error || `Signup failed (${response.status})`);
+      }
+
+      localStorage.setItem("user", JSON.stringify(data || { email }));
       navigate("/profile");
     } catch (err) {
       setError(err.message);
     }
   };
 
+  // ---------- STYLES ----------
   const containerStyle = {
     display: "flex",
     height: "100vh",
@@ -66,7 +96,7 @@ export default function Signup() {
   };
 
   const formContainerStyle = {
-    maxWidth: "400px",
+    maxWidth: "450px",
     width: "100%",
   };
 
@@ -77,6 +107,11 @@ export default function Signup() {
     borderRadius: "6px",
     border: "1px solid #ccc",
     fontSize: "14px",
+  };
+
+  const selectStyle = {
+    ...inputStyle,
+    backgroundColor: "#fff",
   };
 
   const checkboxStyle = {
@@ -132,6 +167,69 @@ export default function Signup() {
         <form style={formContainerStyle} onSubmit={handleSubmit}>
           <h2>Card Connect Registration</h2>
           <p>Please fill in your details to create your account</p>
+
+          <input
+            type="text"
+            placeholder="Enter your first name"
+            style={inputStyle}
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+            required
+          />
+
+          <input
+            type="text"
+            placeholder="Enter your last name"
+            style={inputStyle}
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
+            required
+          />
+
+          <input
+            type="tel"
+            placeholder="Enter your phone number"
+            style={inputStyle}
+            value={contactNumber}
+            onChange={(e) => setContactNumber(e.target.value)}
+            required
+          />
+
+          <select
+            style={selectStyle}
+            value={gender}
+            onChange={(e) => setGender(e.target.value)}
+          >
+            <option value="M">Male</option>
+            <option value="F">Female</option>
+          </select>
+
+          <input
+            type="date"
+            placeholder="Enter your date of birth"
+            style={inputStyle}
+            value={dateOfBirth}
+            onChange={(e) => setDateOfBirth(e.target.value)}
+            required
+          />
+
+          <select
+            style={selectStyle}
+            value={idType}
+            onChange={(e) => setIdType(e.target.value)}
+          >
+            <option value="SA_ID">South African ID</option>
+            <option value="PASSPORT">Passport</option>
+          </select>
+
+          <input
+            type="text"
+            placeholder="Enter your ID or Passport number"
+            style={inputStyle}
+            value={identificationNumber}
+            onChange={(e) => setIdentificationNumber(e.target.value)}
+            required
+          />
 
           <input
             type="email"
