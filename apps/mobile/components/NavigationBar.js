@@ -22,7 +22,7 @@ export default function NavBar({ title }) {
   const [menuVisible, setMenuVisible] = useState(false);
   const slideAnim = useRef(new Animated.Value(-width)).current;
 
-  const { setStudentId } = useContext(UserContext); // ✅ use student context
+  const { setStudentInfo, setToken } = useContext(UserContext); // update to match your context
 
   const menuItems = [
     { label: "Home", icon: "home-outline", screen: "Dashboard" },
@@ -47,9 +47,10 @@ export default function NavBar({ title }) {
     setMenuVisible(false);
 
     if (item.label === "Logout") {
-      // ✅ Clear studentId from context and AsyncStorage
-      setStudentId(null);
-      await AsyncStorage.removeItem("userId");
+      // ✅ Clear all user data from context and AsyncStorage
+      setStudentInfo(null);
+      setToken(null);
+      await AsyncStorage.clear();
 
       // Reset navigation stack to Welcome
       navigation.reset({
