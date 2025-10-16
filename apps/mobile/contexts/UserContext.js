@@ -1,24 +1,25 @@
 import React, { createContext, useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-// Create the context
 export const UserContext = createContext();
 
-// Create a provider component
 export const UserProvider = ({ children }) => {
-  const [studentId, setStudentId] = useState(null);
+  const [token, setToken] = useState(null);
+  const [studentInfo, setStudentInfo] = useState(null);
 
   useEffect(() => {
-    // Load studentId from AsyncStorage on mount
-    const loadStudentId = async () => {
-      const storedId = await AsyncStorage.getItem("userId");
-      if (storedId) setStudentId(storedId);
+    // Load token and student info from AsyncStorage on mount
+    const loadUser = async () => {
+      const storedToken = await AsyncStorage.getItem("token");
+      const storedStudentInfo = await AsyncStorage.getItem("studentInfo");
+      if (storedToken) setToken(storedToken);
+      if (storedStudentInfo) setStudentInfo(JSON.parse(storedStudentInfo));
     };
-    loadStudentId();
+    loadUser();
   }, []);
 
   return (
-    <UserContext.Provider value={{ studentId, setStudentId }}>
+    <UserContext.Provider value={{ token, setToken, studentInfo, setStudentInfo }}>
       {children}
     </UserContext.Provider>
   );

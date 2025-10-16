@@ -18,6 +18,14 @@
 //     { label: "Printing Credits", icon: "cash-outline", screen: "PrintingCredits" },
 //   ];
 
+//   const handleLogout = async () => {
+//     await AsyncStorage.clear();
+//     navigation.reset({
+//       index: 0,
+//       routes: [{ name: "Login" }], // or "Welcome", if that's your starting route
+//     });
+//   };
+
 //   return (
 //     <View style={styles.container}>
 //       <NavBar title="CARDCONNECT" />
@@ -105,13 +113,17 @@ import Icon from "react-native-vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
 import NavBar from "../components/NavigationBar";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { AppButton } from "../components/MobileButton";
+import { useContext } from "react";
+import { UserContext } from "../contexts/UserContext";
 
 const { width } = Dimensions.get("window");
 
 export default function Dashboard() {
   const navigation = useNavigation();
-  const userName = "Ayesha";
+  const { studentInfo } = useContext(UserContext);
+  const userName = studentInfo
+    ? `${studentInfo.firstName} ${studentInfo.lastName}`
+    : "";
 
   const menuItems = [
     {
@@ -167,13 +179,6 @@ export default function Dashboard() {
           </TouchableOpacity>
         ))}
       </View>
-
-      {/* Temporary Logout Button */}
-      <View style={styles.logoutContainer}>
-        <TouchableOpacity onPress={handleLogout}>
-          <Text>Logout</Text>
-        </TouchableOpacity>
-      </View>
     </View>
   );
 }
@@ -224,9 +229,5 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: 8,
     color: "#000",
-  },
-  logoutContainer: {
-    padding: 20,
-    alignItems: "center",
   },
 });

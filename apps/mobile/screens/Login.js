@@ -8,11 +8,12 @@ import {
   Alert,
   TouchableOpacity,
 } from "react-native";
-import { useState } from "react";
-import { MaterialIcons } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
-import { AppButton } from "../components/MobileButton.js"; // Import your custom button
+import { useState, useContext } from "react";
+import { UserContext } from "../contexts/UserContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { LinearGradient } from "expo-linear-gradient";
+import { MaterialIcons } from "@expo/vector-icons";
+import { AppButton } from "../components/MobileButton";
 
 export default function Login({ navigation }) {
   const [studentNumber, setStudentNumber] = useState("");
@@ -20,6 +21,7 @@ export default function Login({ navigation }) {
   const [secureText, setSecureText] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const { setStudentId, setStudentInfo, setToken } = useContext(UserContext);
 
   const handleLogin = async () => {
     setLoading(true);
@@ -27,7 +29,7 @@ export default function Login({ navigation }) {
 
     try {
       const response = await fetch(
-        "http://172.20.10.8:9091/api/user-accounts/login",
+        "http://192.168.1.14:9091/api/user-accounts/login",
         {
           method: "POST",
           headers: {
@@ -59,11 +61,23 @@ export default function Login({ navigation }) {
         // Store token and optionally user info
         console.log("Saving token:", data.token); // <-- Add this
         await AsyncStorage.setItem("token", data.token);
-        await AsyncStorage.setItem("email", data.email);
-        await AsyncStorage.setItem("userId", data.userId);
-        // You can also store name/role/etc. if needed
+        setToken(data.token);
 
-        console.log("Token stored.");
+        // Fetch student info and store in context and AsyncStorage
+        const infoResponse = await fetch(
+          "http://192.168.1.14:9091/api/student-info",
+          {
+            method: "GET",
+            headers: {
+              Authorization: "Bearer " + data.token,
+            },
+          }
+        );
+        if (infoResponse.ok) {
+          const info = await infoResponse.json();
+          setStudentInfo(info);
+          await AsyncStorage.setItem("studentInfo", JSON.stringify(info));
+        }
       }
 
       setLoading(false);

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -11,61 +11,55 @@ import NavBar from "../components/NavigationBar";
 import { useNavigation } from "@react-navigation/native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { UserContext } from "../contexts/UserContext";
-import QRCode from "react-native-qrcode-svg"; 
+import QRCode from "react-native-qrcode-svg";
 
 export default function ViewStudentCard() {
   const navigation = useNavigation();
-  const { token } = useContext(UserContext); // Ensure your UserContext provides the JWT token
-  const [studentInfo, setStudentInfo] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { studentInfo, token } = useContext(UserContext);
+  const [photoBase64, setPhotoBase64] = useState(null);
+  const [photoLoading, setPhotoLoading] = useState(true);
 
   useEffect(() => {
-    const fetchStudentInfo = async () => {
+    const fetchPhoto = async () => {
+      if (!token) return;
       try {
-        const response = await fetch("http://192.168.101.106:9091/api/student-info", {
+        const response = await fetch("http://192.168.1.14:9091/api/profile/photo", {
           method: "GET",
           headers: {
             "Authorization": "Bearer " + token,
           },
         });
         if (response.ok) {
-          const data = await response.json();
-          setStudentInfo(data);
+          const blob = await response.blob();
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            const base64data = reader.result.split(",")[1];
+            setPhotoBase64(base64data);
+            setPhotoLoading(false);
+          };
+          reader.readAsDataURL(blob);
         } else {
-          setStudentInfo(null);
+          setPhotoLoading(false);
         }
       } catch (error) {
-        setStudentInfo(null);
-      } finally {
-        setLoading(false);
+        setPhotoLoading(false);
       }
     };
-
-    if (token) {
-      fetchStudentInfo();
-    }
+    fetchPhoto();
   }, [token]);
-
-  if (loading) {
-    return (
-      <View style={[styles.outerContainer, { justifyContent: "center", alignItems: "center" }]}>
-        <ActivityIndicator size="large" color="#145DA0" />
-      </View>
-    );
-  }
 
   if (!studentInfo) {
     return (
       <View style={[styles.outerContainer, { justifyContent: "center", alignItems: "center" }]}>
-        <Text style={{ color: "#145DA0", fontWeight: "bold" }}>
-          Unable to load student information.
+        <ActivityIndicator size="large" color="#145DA0" />
+        <Text style={{ color: "#145DA0", fontWeight: "bold", marginTop: 10 }}>
+          Loading student information...
         </Text>
       </View>
     );
   }
 
-  // Generate a unique QR code value for the student (e.g., student number + timestamp or just student number)
-  const qrValue = studentInfo.userId; // You can make this more unique if needed
+  const qrValue = studentInfo.userId;
 
   return (
     <View style={styles.outerContainer}>
@@ -90,54 +84,35 @@ export default function ViewStudentCard() {
         </View>
 
         <View style={styles.profileAndDetailsContainer}>
-          <Image
-            source={{ uri: `data:image/jpeg;base64,${studentInfo.photoBase64}` }}
-            style={styles.profileImage}
-            onError={(e) => console.log(e.nativeEvent.error)}
-          />
+          {photoLoading ? (
+            <ActivityIndicator size="small" color="#145DA0" style={styles.profileImage} />
+          ) : (
+            <Image
+              source={
+                photoBase64
+                  ? { uri: `data:image/jpeg;base64,${photoBase64}` }
+                  : require("../assets/images.jpg")
+              }
+              style={styles.profileImage}
+            />
+          )}
 
           <View style={styles.infoContainer}>
             <Text style={styles.name}>
               {studentInfo.firstName} {studentInfo.lastName}
             </Text>
-
             <Text style={styles.label}>Student Number</Text>
             <Text style={styles.value}>{studentInfo.userId}</Text>
-
-            <Text style={styles.label}>Faculty</Text>
-            <Text style={styles.value}>{studentInfo.faculty || "N/A"}</Text>
-
             <Text style={styles.label}>Department</Text>
             <Text style={styles.value}>{studentInfo.department || "N/A"}</Text>
-
+            <Text style={styles.label}>Degree</Text>
+            <Text style={styles.value}>{studentInfo.degree || "N/A"}</Text>
+            <Text style={styles.label}>School</Text>
+            <Text style={styles.value}>{studentInfo.school || "N/A"}</Text>
+            <Text style={styles.label}>Year of Study</Text>
+            <Text style={styles.value}>{studentInfo.yearOfStudy || "N/A"}</Text>
             <Text style={styles.label}>Email</Text>
-            <Text style={styles.value}>{studentInfo.institutionalEmail || "N/A"}</Text>
-          </View>
-        </View>
-
-        <View style={styles.additionalInfoBlock}>
-          <View style={styles.detailRow}>
-            <View style={styles.detailItem}>
-              <Text style={styles.label}>Valid Until</Text>
-              <Text style={styles.value}>{studentInfo.validUntil || "31 December 2025"}</Text>
-            </View>
-            <View style={styles.detailItem}>
-              <Text style={styles.label}>Campus</Text>
-              <Text style={styles.value}>{studentInfo.campus || "Bellville Campus"}</Text>
-            </View>
-          </View>
-
-          <View style={styles.detailRow}>
-            <View style={styles.detailItem}>
-              <Text style={styles.label}>Card Type</Text>
-              <Text style={styles.value}>{studentInfo.cardType || "Full-time Undergraduate"}</Text>
-            </View>
-            <View style={styles.detailItem}>
-              <Text style={styles.label}>Access Level</Text>
-              <Text style={styles.value}>
-                {studentInfo.accessLevel || "Academic Buildings, Library, Labs"}
-              </Text>
-            </View>
+            <Text style={styles.value}>{studentInfo.email || "N/A"}</Text>
           </View>
         </View>
 
@@ -230,21 +205,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 6,
     color: "#000",
-  },
-  additionalInfoBlock: {
-    paddingHorizontal: 15,
-    paddingBottom: 15,
-    borderTopWidth: 1,
-    borderTopColor: "#EEE",
-    marginTop: 10,
-  },
-  detailRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 10,
-  },
-  detailItem: {
-    flex: 1,
   },
   qrSection: {
     paddingVertical: 20,
