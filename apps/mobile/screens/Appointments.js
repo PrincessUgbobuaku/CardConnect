@@ -12,7 +12,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { Modal, Portal, List, TextInput as PaperInput } from 'react-native-paper';
 
 import InfoCard from '../components/InfoCard';
-import { MobileButton } from '../components/MobileButton';
+import { AppButton } from '../components/MobileButton';
 import ScreenHeader from '../components/ScreenHeader'; // Custom header component
 
 export default function CardAppointmentScreen() {
@@ -148,9 +148,9 @@ export default function CardAppointmentScreen() {
         </ScrollView>
 
         {/* Confirm */}
-        <MobileButton onPress={handleConfirm} style={styles.confirmBtn}>
+        <AppButton onPress={handleConfirm} style={styles.confirmBtn}>
           Confirm
-        </MobileButton>
+        </AppButton>
       </View>
     </SafeAreaView>
   );

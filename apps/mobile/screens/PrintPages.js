@@ -3,7 +3,8 @@ import React, { useState, useContext } from "react";
 import { View, Text, TextInput, Alert, StyleSheet, ScrollView } from "react-native";
 import { CreditsContext } from "../context/CreditsContext";
 import ScreenHeader from "../components/ScreenHeader";
-import { MobileButton } from "../components/MobileButton";
+import { AppButton } from "../components/MobileButton";
+import { TouchableOpacity } from "react-native";
 
 export default function PrintPagesScreen() {
   const { credits, deductCredits } = useContext(CreditsContext);
@@ -89,9 +90,9 @@ export default function PrintPagesScreen() {
         <Text style={styles.costText}>Estimated Cost: R{cost}</Text>
       </View>
 
-      <MobileButton onPress={handlePrint} style={styles.printButton}>
+      <AppButton onPress={handlePrint} style={styles.printButton}>
         Print
-      </MobileButton>
+      </AppButton>
     </ScrollView>
   );
 }

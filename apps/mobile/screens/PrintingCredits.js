@@ -3,7 +3,7 @@ import React, { useState, useContext } from "react";
 import { View, Text, StyleSheet, TextInput, Alert, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import ScreenHeader from "../components/ScreenHeader";
-import { MobileButton } from "../components/MobileButton";
+import { AppButton } from "../components/MobileButton";
 import { CreditsContext } from "../context/CreditsContext";
 
 export default function LoadCreditsScreen() {
@@ -42,9 +42,9 @@ export default function LoadCreditsScreen() {
         onChangeText={setAmountToLoad}
       />
 
-      <MobileButton style={styles.loadBtn} onPress={handleLoadCredits}>
+      <AppButton style={styles.loadBtn} onPress={handleLoadCredits}>
         Load Credits
-      </MobileButton>
+      </AppButton>
 
       <Text style={styles.note}>
         *In production, this could link to a payment gateway (e.g. PayFast,
