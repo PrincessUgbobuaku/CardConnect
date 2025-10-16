@@ -8,14 +8,14 @@ import {
   Modal,
   TextInput,
 } from "react-native";
-import { AppButton } from "../components/MobileButton";
 import NavBar from "../components/NavigationBar";
 import Icon from "react-native-vector-icons/Ionicons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function ReportCard() {
   const [selectedStatus, setSelectedStatus] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
-  const [notes, setNotes] = useState(""); 
+  const [notes, setNotes] = useState("");
   const { studentId } = useContext(UserContext);
 
   const handleSubmit = () => {
@@ -33,18 +33,28 @@ export default function ReportCard() {
       return;
     }
     try {
-      const response = await fetch("http://192.168.101.106:9091/api/cardreports", {
+      const token = await AsyncStorage.getItem("token");
+      const response = await fetch("http://192.168.1.14:9091/api/cardreports", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ studentId, status: selectedStatus, notes }), // Include notes
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        },
+        body: JSON.stringify({ studentId, status: selectedStatus, notes }),
       });
       if (response.ok) {
         alert(`Card report submitted as '${selectedStatus}'.`);
         setSelectedStatus(null);
-        setNotes(""); // Reset notes
+        setNotes("");
       } else {
-        const data = await response.json();
-        alert("Failed to submit report: " + data.message);
+        const text = await response.text();
+        let data;
+        try {
+          data = JSON.parse(text);
+        } catch {
+          data = text;
+        }
+        alert("Failed to submit report: " + (data?.message || data));
       }
     } catch (error) {
       console.error(error);
@@ -59,12 +69,17 @@ export default function ReportCard() {
 
       {/* Header */}
       <View style={styles.header}>
-        <Icon name="alert-circle-outline" size={28} color="#145DA0" style={styles.headerIcon} />
+        <Icon
+          name="alert-circle-outline"
+          size={28}
+          color="#145DA0"
+          style={styles.headerIcon}
+        />
         <Text style={styles.headerTitle}>Report a Lost/Stolen Card</Text>
         <Text style={styles.headerMessage}>
-          Has your student card been lost, stolen, damaged or not received?
-          You can report it here, and your new card will be prepared.
-          Please note that your current card will be void.
+          Has your student card been lost, stolen, damaged or not received? You
+          can report it here, and your new card will be prepared. Please note
+          that your current card will be void.
         </Text>
       </View>
 
@@ -140,11 +155,7 @@ export default function ReportCard() {
             <Text style={styles.modalMessage}>
               Are you sure you want to report this card as "{selectedStatus}"?
             </Text>
-            {notes ? (
-              <Text style={styles.modalMessage}>
-                Notes: {notes}
-              </Text>
-            ) : null}
+            {notes ? <Text style={styles.modalMessage}>Notes: {notes}</Text> : null}
             <View style={styles.modalRow}>
               <TouchableOpacity
                 style={[styles.modalBtn, styles.noBtn]}
@@ -172,25 +183,45 @@ const styles = StyleSheet.create({
   /* Header */
   header: { padding: 20, alignItems: "center" },
   headerIcon: { marginBottom: 10 },
-  headerTitle: { fontSize: 20, fontWeight: "bold", color: "#145DA0", marginBottom: 10, textAlign: "center" },
-  headerMessage: { fontSize: 14, color: "#333", textAlign: "center", lineHeight: 20 },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#145DA0",
+    marginBottom: 10,
+    textAlign: "center",
+  },
+  headerMessage: {
+    fontSize: 14,
+    color: "#333",
+    textAlign: "center",
+    lineHeight: 20,
+  },
 
   /* Status Buttons */
   section: { marginTop: 20, paddingHorizontal: 20 },
   sectionTitle: { fontSize: 16, fontWeight: "bold", marginBottom: 10 },
-  statusRow: { flexDirection: "row", justifyContent: "space-between" },
+  statusRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+  },
   statusButton: {
-    flex: 1,
+    width: "48%", // two buttons per row for even spacing
     paddingVertical: 12,
     borderRadius: 5,
     borderWidth: 1,
     borderColor: "#145DA0",
     alignItems: "center",
-    marginHorizontal: 5,
+    justifyContent: "center",
+    marginVertical: 5,
     backgroundColor: "#fff",
   },
   statusButtonSelected: { backgroundColor: "#145DA0" },
-  statusText: { color: "#145DA0", fontWeight: "bold" },
+  statusText: {
+    color: "#145DA0",
+    fontWeight: "bold",
+    textAlign: "center",
+  },
   statusTextSelected: { color: "#fff" },
 
   /* Notes Input */
@@ -207,20 +238,58 @@ const styles = StyleSheet.create({
   },
 
   /* Action Buttons */
-  actionRow: { flexDirection: "row", justifyContent: "space-between", marginTop: 30, paddingHorizontal: 20 },
-  actionButton: { flex: 1, paddingVertical: 12, borderRadius: 5, alignItems: "center", marginHorizontal: 5 },
+  actionRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 30,
+    paddingHorizontal: 20,
+  },
+  actionButton: {
+    flex: 1,
+    paddingVertical: 12,
+    borderRadius: 5,
+    alignItems: "center",
+    marginHorizontal: 5,
+  },
   cancelButton: { backgroundColor: "#ddd" },
   submitButton: { backgroundColor: "#145DA0" },
   cancelText: { color: "#333", fontWeight: "bold" },
   submitText: { color: "#fff", fontWeight: "bold" },
 
   /* Modal */
-  modalOverlay: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.4)" },
-  modalView: { backgroundColor: "#fff", borderRadius: 10, padding: 20, width: "80%" },
-  modalTitle: { fontSize: 18, fontWeight: "bold", color: "#145DA0", textAlign: "center", marginBottom: 10 },
-  modalMessage: { fontSize: 14, textAlign: "center", color: "#333", marginBottom: 20 },
+  modalOverlay: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.4)",
+  },
+  modalView: {
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    padding: 20,
+    width: "80%",
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#145DA0",
+    textAlign: "center",
+    marginBottom: 10,
+  },
+  modalMessage: {
+    fontSize: 14,
+    textAlign: "center",
+    color: "#333",
+    marginBottom: 20,
+  },
   modalRow: { flexDirection: "row", justifyContent: "space-between" },
-  modalBtn: { flex: 1, paddingVertical: 10, borderRadius: 5, alignItems: "center", marginHorizontal: 5 },
+  modalBtn: {
+    flex: 1,
+    paddingVertical: 10,
+    borderRadius: 5,
+    alignItems: "center",
+    marginHorizontal: 5,
+  },
   noBtn: { backgroundColor: "#ddd" },
   yesBtn: { backgroundColor: "#145DA0" },
   noBtnText: { color: "#333", fontWeight: "600" },

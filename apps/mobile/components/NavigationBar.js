@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
 import {
   View,
   Image,
@@ -12,6 +12,8 @@ import {
 import Icon from "react-native-vector-icons/Ionicons";
 import { Text as PaperText } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
+import { UserContext } from "../contexts/UserContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const { width } = Dimensions.get("window");
 
@@ -20,6 +22,8 @@ export default function NavBar({ title }) {
   const [menuVisible, setMenuVisible] = useState(false);
   const slideAnim = useRef(new Animated.Value(-width)).current;
 
+  const { setStudentId } = useContext(UserContext); // ✅ use student context
+
   const menuItems = [
     { label: "Home", icon: "home-outline", screen: "Dashboard" },
     { label: "View virtual card", icon: "card-outline", screen: "ViewStudentCard" },
@@ -27,25 +31,35 @@ export default function NavBar({ title }) {
     { label: "Print & Go", icon: "print-outline", screen: "PrintPages" },
     { label: "Report card", icon: "alert-circle-outline", screen: "ReportCard" },
     { label: "Printing Credits", icon: "cash-outline", screen: "PrintingCredits" },
-    { label: "Profile", icon: "person-outline", screen: "Profile" }, // ✅ add to sidebar too
+    { label: "Profile", icon: "person-outline", screen: "Profile" },
+    { label: "Logout", icon: "log-out-outline", screen: "Welcome" }, // Logout button
   ];
 
-  // Animate drawer open/close
   useEffect(() => {
-    if (menuVisible) {
-      Animated.timing(slideAnim, {
-        toValue: 0,
-        duration: 300,
-        useNativeDriver: true,
-      }).start();
-    } else {
-      Animated.timing(slideAnim, {
-        toValue: -width,
-        duration: 300,
-        useNativeDriver: true,
-      }).start();
-    }
+    Animated.timing(slideAnim, {
+      toValue: menuVisible ? 0 : -width,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
   }, [menuVisible]);
+
+  const handleMenuPress = async (item) => {
+    setMenuVisible(false);
+
+    if (item.label === "Logout") {
+      // ✅ Clear studentId from context and AsyncStorage
+      setStudentId(null);
+      await AsyncStorage.removeItem("userId");
+
+      // Reset navigation stack to Welcome
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "Welcome" }],
+      });
+    } else {
+      navigation.navigate(item.screen);
+    }
+  };
 
   return (
     <View>
@@ -86,7 +100,7 @@ export default function NavBar({ title }) {
             style={styles.navIcon}
             onPress={() => {
               setMenuVisible(false);
-              navigation.navigate("MainDrawer", { screen: "Profile" }); // ✅ drawer navigation
+              navigation.navigate("MainDrawer", { screen: "Profile" });
             }}
           >
             <Icon name="person-circle-outline" size={26} color="#000" />
@@ -102,10 +116,7 @@ export default function NavBar({ title }) {
           onPressOut={() => setMenuVisible(false)}
         >
           <Animated.View
-            style={[
-              styles.sideMenu,
-              { transform: [{ translateX: slideAnim }] },
-            ]}
+            style={[styles.sideMenu, { transform: [{ translateX: slideAnim }] }]}
           >
             <View style={styles.menuHeader}>
               <Text style={styles.menuTitle}>Menu</Text>
@@ -119,18 +130,22 @@ export default function NavBar({ title }) {
                 <TouchableOpacity
                   key={index}
                   style={styles.menuItem}
-                  onPress={() => {
-                    setMenuVisible(false);
-                    navigation.navigate("MainDrawer", { screen: item.screen }); // ✅ navigate inside Drawer
-                  }}
+                  onPress={() => handleMenuPress(item)}
                 >
                   <Icon
                     name={item.icon}
                     size={24}
-                    color="#145DA0"
+                    color={item.label === "Logout" ? "#D9534F" : "#145DA0"}
                     style={styles.menuIcon}
                   />
-                  <Text style={styles.menuText}>{item.label}</Text>
+                  <Text
+                    style={[
+                      styles.menuText,
+                      item.label === "Logout" && { color: "#D9534F" },
+                    ]}
+                  >
+                    {item.label}
+                  </Text>
                 </TouchableOpacity>
               ))}
             </View>
