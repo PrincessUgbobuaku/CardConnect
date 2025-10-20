@@ -1,28 +1,73 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   View,
   Text,
   Image,
   StyleSheet,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
-import StudentBarcode from "../components/Barcode";
 import NavBar from "../components/NavigationBar";
 import { useNavigation } from "@react-navigation/native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { UserContext } from "../contexts/UserContext";
+import QRCode from "react-native-qrcode-svg";
 
 export default function ViewStudentCard() {
   const navigation = useNavigation();
+  const { studentInfo, token } = useContext(UserContext);
+  const [photoBase64, setPhotoBase64] = useState(null);
+  const [photoLoading, setPhotoLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPhoto = async () => {
+      if (!token) return;
+      try {
+        const response = await fetch("http://192.168.1.14:9091/api/profile/photo", {
+          method: "GET",
+          headers: {
+            "Authorization": "Bearer " + token,
+          },
+        });
+        if (response.ok) {
+          const blob = await response.blob();
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            const base64data = reader.result.split(",")[1];
+            setPhotoBase64(base64data);
+            setPhotoLoading(false);
+          };
+          reader.readAsDataURL(blob);
+        } else {
+          setPhotoLoading(false);
+        }
+      } catch (error) {
+        setPhotoLoading(false);
+      }
+    };
+    fetchPhoto();
+  }, [token]);
+
+  if (!studentInfo) {
+    return (
+      <View style={[styles.outerContainer, { justifyContent: "center", alignItems: "center" }]}>
+        <ActivityIndicator size="large" color="#145DA0" />
+        <Text style={{ color: "#145DA0", fontWeight: "bold", marginTop: 10 }}>
+          Loading student information...
+        </Text>
+      </View>
+    );
+  }
+
+  const qrValue = studentInfo.userId;
 
   return (
     <View style={styles.outerContainer}>
-
       <NavBar title="Student Card" />
 
       <Text style={styles.virtualCardHeading}>Virtual Card</Text>
 
       <View style={styles.studentCard}>
-
         <View style={styles.cardHeader}>
           <MaterialCommunityIcons
             name="school-outline"
@@ -39,60 +84,40 @@ export default function ViewStudentCard() {
         </View>
 
         <View style={styles.profileAndDetailsContainer}>
-
-          <Image
-            source={require("../assets/images.jpg")}
-            style={styles.profileImage}
-            onError={(e) => console.log(e.nativeEvent.error)}
-          />
+          {photoLoading ? (
+            <ActivityIndicator size="small" color="#145DA0" style={styles.profileImage} />
+          ) : (
+            <Image
+              source={
+                photoBase64
+                  ? { uri: `data:image/jpeg;base64,${photoBase64}` }
+                  : require("../assets/images.jpg")
+              }
+              style={styles.profileImage}
+            />
+          )}
 
           <View style={styles.infoContainer}>
-            <Text style={styles.name}>Ayesha Daniels</Text>
-
-            <Text style={styles.label}>Student Number</Text>
-            <Text style={styles.value}>219045876</Text>
-
-            <Text style={styles.label}>Faculty</Text>
-            <Text style={styles.value}>
-              Engineering & the Built Environment
+            <Text style={styles.name}>
+              {studentInfo.firstName} {studentInfo.lastName}
             </Text>
-
+            <Text style={styles.label}>Student Number</Text>
+            <Text style={styles.value}>{studentInfo.userId}</Text>
             <Text style={styles.label}>Department</Text>
-            <Text style={styles.value}>Electrical Engineering</Text>
-
+            <Text style={styles.value}>{studentInfo.department || "N/A"}</Text>
+            <Text style={styles.label}>Degree</Text>
+            <Text style={styles.value}>{studentInfo.degree || "N/A"}</Text>
+            <Text style={styles.label}>School</Text>
+            <Text style={styles.value}>{studentInfo.school || "N/A"}</Text>
+            <Text style={styles.label}>Year of Study</Text>
+            <Text style={styles.value}>{studentInfo.yearOfStudy || "N/A"}</Text>
             <Text style={styles.label}>Email</Text>
-            <Text style={styles.value}>ayesha.daniels@mycput.ac.za</Text>
+            <Text style={styles.value}>{studentInfo.email || "N/A"}</Text>
           </View>
         </View>
 
-        <View style={styles.additionalInfoBlock}>
-          <View style={styles.detailRow}>
-            <View style={styles.detailItem}>
-              <Text style={styles.label}>Valid Until</Text>
-              <Text style={styles.value}>31 December 2025</Text>
-            </View>
-            <View style={styles.detailItem}>
-              <Text style={styles.label}>Campus</Text>
-              <Text style={styles.value}>Bellville Campus</Text>
-            </View>
-          </View>
-
-          <View style={styles.detailRow}>
-            <View style={styles.detailItem}>
-              <Text style={styles.label}>Card Type</Text>
-              <Text style={styles.value}>Full-time Undergraduate</Text>
-            </View>
-            <View style={styles.detailItem}>
-              <Text style={styles.label}>Access Level</Text>
-              <Text style={styles.value}>
-                Academic Buildings, Library, Labs
-              </Text>
-            </View>
-          </View>
-        </View>
-
-        <View style={styles.barcodeSection}>
-          <StudentBarcode value="219045876" />
+        <View style={styles.qrSection}>
+          <QRCode value={qrValue} size={120} />
         </View>
       </View>
 
@@ -181,25 +206,9 @@ const styles = StyleSheet.create({
     marginBottom: 6,
     color: "#000",
   },
-  additionalInfoBlock: {
-    paddingHorizontal: 15,
-    paddingBottom: 15,
-    borderTopWidth: 1,
-    borderTopColor: "#EEE",
-    marginTop: 10,
-  },
-  detailRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 10,
-  },
-  detailItem: {
-    flex: 1,
-  },
-  barcodeSection: {
-    paddingVertical: 2,
-    paddingHorizontal: 2,
-    alignItems: "stretch",
+  qrSection: {
+    paddingVertical: 20,
+    alignItems: "center",
     borderTopWidth: 2,
     borderTopColor: "#EEE",
     marginTop: 2,

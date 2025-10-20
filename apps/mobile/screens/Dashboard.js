@@ -9,13 +9,22 @@ import {
 import Icon from "react-native-vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
 import NavBar from "../components/NavigationBar";
+// added
+import AsyncStorage from "@react-native-async-storage/async-storage"; 
+import { useContext } from "react";
+import { UserContext } from "../contexts/UserContext";
+// added
+
 // import AsyncStorage from "@react-native-async-storage/async-storage"; // No longer needed
 
 const { width } = Dimensions.get("window");
 
 export default function Dashboard() {
   const navigation = useNavigation();
-  const userName = "Ayesha";
+  const { studentInfo } = useContext(UserContext);
+  const userName = studentInfo
+    ? `${studentInfo.firstName} ${studentInfo.lastName}`
+    : "";
 
   const menuItems = [
     {
@@ -135,9 +144,5 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: 8,
     color: "#000",
-  },
-  logoutContainer: {
-    padding: 20,
-    alignItems: "center",
   },
 });
