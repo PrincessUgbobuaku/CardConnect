@@ -29,7 +29,7 @@ export default function Login({ navigation }) {
 
     try {
       const response = await fetch(
-        "http://192.168.1.14:9091/api/user-accounts/login",
+        "http://192.168.101.105:9091/api/user-accounts/login",
         {
           method: "POST",
           headers: {

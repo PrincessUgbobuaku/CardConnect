@@ -1,8 +1,33 @@
-import React from "react";
-import { Link } from "react-router-dom";
+
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/cardconnect-logo.png";
 
 export default function Profile() {
+  const navigate = useNavigate();
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    // Get user data from localStorage
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    } else {
+      // Redirect to login if no user found
+      navigate("/login");
+    }
+  }, [navigate]);
+
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    navigate("/login");
+  };
+
+  if (!user) {
+    // You can also add a loading spinner here
+    return <div style={{ textAlign: "center", marginTop: "50px" }}>Loading...</div>;
+  }
+
   const containerStyle = {
     display: "flex",
     minHeight: "100vh",
@@ -50,6 +75,7 @@ export default function Profile() {
     color: "#d9534f",
     borderTop: "1px solid #ddd",
     fontWeight: "500",
+    cursor: "pointer",
   };
 
   const topBarStyle = {
@@ -126,28 +152,32 @@ export default function Profile() {
             <h3 style={{ color: "#145DA0", fontSize: "16px", margin: "0" }}>CARD CONNECT</h3>
           </div>
           <nav style={navStyle}>
-            <a href="#" style={navItemStyle}>DASHBOARD</a>
-            <a href="#" style={navItemStyle}>PROFILE</a>
-            <a href="#" style={navItemStyle}>SETTINGS</a>
-            <a href="#" style={navItemStyle}>NOTIFICATIONS CENTER</a>
-            <a href="#" style={navItemStyle}>VIEW VIRTUAL CARD</a>
+            <Link to="#" style={navItemStyle}>DASHBOARD</Link>
+            <Link to="#" style={navItemStyle}>PROFILE</Link>
+            <Link to="#" style={navItemStyle}>SETTINGS</Link>
+            <Link to="#" style={navItemStyle}>NOTIFICATIONS CENTER</Link>
+            <Link to="#" style={navItemStyle}>VIEW VIRTUAL CARD</Link>
           </nav>
         </div>
-        <a href="#" style={logoutStyle}>LOG OUT</a>
+        <button onClick={handleLogout} style={logoutStyle}>LOG OUT</button>
       </div>
 
       {/* Main Content */}
       <div style={{ flex: 1 }}>
         {/* Top Bar */}
         <div style={topBarStyle}>
-          <span style={{ marginRight: "15px", fontWeight: "500" }}>Sabrina Smith</span>
+          <span style={{ marginRight: "15px", fontWeight: "500" }}>
+            {user.firstName} {user.lastName}
+          </span>
         </div>
 
         {/* Profile Header */}
         <div style={profileHeaderStyle}>
           <div style={profilePicStyle}></div>
-          <h2 style={{ margin: "5px 0" }}>Sabrina Smith</h2>
-          <p style={{ margin: "0", color: "#888" }}>237712131</p>
+          <h2 style={{ margin: "5px 0" }}>
+            {user.firstName} {user.lastName}
+          </h2>
+          <p style={{ margin: "0", color: "#888" }}>{user.userId || "—"}</p>
           <button style={editButtonStyle}>Edit profile</button>
         </div>
 
@@ -155,12 +185,12 @@ export default function Profile() {
         <div style={infoContainerStyle}>
           <div style={infoBlockStyle}>
             <h3 style={infoTitleStyle}>Personal Information</h3>
-            <p style={infoItemStyle}><strong>Email:</strong> 230098010@mycput.ac.za</p>
-            <p style={infoItemStyle}><strong>Phone:</strong> +27 67 455 7777</p>
+            <p style={infoItemStyle}><strong>Email:</strong> {user.email}</p>
+            <p style={infoItemStyle}><strong>Phone:</strong> {user.contactNumber}</p>
           </div>
           <div style={infoBlockStyle}>
-            <h3 style={infoTitleStyle}>Academic Information</h3>
-            <p style={infoItemStyle}><strong>Role:</strong> Administrator</p>
+            <h3 style={infoTitleStyle}>Account Information</h3>
+            <p style={infoItemStyle}><strong>Role:</strong> {user.role || "Administrator"}</p>
             <p style={infoItemStyle}><strong>Card Status:</strong> Active</p>
           </div>
         </div>

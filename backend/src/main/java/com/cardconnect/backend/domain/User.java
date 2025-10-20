@@ -9,11 +9,10 @@ import java.time.LocalDate;
 public abstract class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Or AUTO, or SEQUENCE depending on your DB
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Long id;
 
-    @Column(length = 9, unique = true, nullable = false)
-    /** studentNumber e.g. "218099999" */
+    @Column(length = 20, unique = true) // removed nullable=false
     protected String userId;
 
     @Enumerated(EnumType.STRING)
@@ -21,8 +20,6 @@ public abstract class User {
 
     protected String firstName;
     protected String lastName;
-    // protected String email;
-    // protected String password;
     protected String contactNumber;
     protected char gender;
     protected LocalDate dateOfBirth;
@@ -47,7 +44,6 @@ public abstract class User {
     }
 
     protected User() {
-        // JPA
     }
 
     public Long getId() {
@@ -69,14 +65,6 @@ public abstract class User {
     public String getLastName() {
         return lastName;
     }
-
-    // public String getEmail() {
-    // return email;
-    // }
-
-    // public String getPassword() {
-    // return password;
-    // }
 
     public String getContactNumber() {
         return contactNumber;
@@ -109,9 +97,6 @@ public abstract class User {
     public String getInstitutionalEmail() {
         return this.userId + "@mycput.ac.za";
     }
-
-    @Override
-    public abstract String toString();
 
     public void setId(Long id) {
         this.id = id;
@@ -160,4 +145,7 @@ public abstract class User {
     public void setProfilePhoto(byte[] profilePhoto) {
         this.profilePhoto = profilePhoto;
     }
+
+    @Override
+    public abstract String toString();
 }
