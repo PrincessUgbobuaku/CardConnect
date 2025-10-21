@@ -1,7 +1,8 @@
-
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/cardconnect-logo.png";
+import SideNav from "../components/SideNav/SideNav";
+import Navbar from "../components/Navbar/Navbar";
 
 export default function Profile() {
   const navigate = useNavigate();
@@ -145,32 +146,11 @@ export default function Profile() {
   return (
     <div style={containerStyle}>
       {/* Sidebar */}
-      <div style={sidebarStyle}>
-        <div>
-          <div style={sidebarTopStyle}>
-            <img src={logo} alt="Card Connect Logo" style={logoStyle} />
-            <h3 style={{ color: "#145DA0", fontSize: "16px", margin: "0" }}>CARD CONNECT</h3>
-          </div>
-          <nav style={navStyle}>
-            <Link to="#" style={navItemStyle}>DASHBOARD</Link>
-            <Link to="#" style={navItemStyle}>PROFILE</Link>
-            <Link to="#" style={navItemStyle}>SETTINGS</Link>
-            <Link to="#" style={navItemStyle}>NOTIFICATIONS CENTER</Link>
-            <Link to="#" style={navItemStyle}>VIEW VIRTUAL CARD</Link>
-          </nav>
-        </div>
-        <button onClick={handleLogout} style={logoutStyle}>LOG OUT</button>
-      </div>
-
+      <SideNav/>
       {/* Main Content */}
       <div style={{ flex: 1 }}>
         {/* Top Bar */}
-        <div style={topBarStyle}>
-          <span style={{ marginRight: "15px", fontWeight: "500" }}>
-            {user.firstName} {user.lastName}
-          </span>
-        </div>
-
+        <Navbar/>
         {/* Profile Header */}
         <div style={profileHeaderStyle}>
           <div style={profilePicStyle}></div>

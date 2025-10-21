@@ -30,7 +30,7 @@ export default function Signup() {
     const userId = Math.floor(100000000 + Math.random() * 900000000).toString();
 
     try {
-      const response = await fetch("http://localhost:8080/api/admin/signup", {
+      const response = await fetch("http://localhost:9090/api/admin/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

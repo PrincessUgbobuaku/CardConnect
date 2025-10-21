@@ -1,7 +1,5 @@
 package com.cardconnect.backend.dto;
 
-
-
 public class AdminLoginRequest {
     private String email;
     private String password;
