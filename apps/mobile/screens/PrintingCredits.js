@@ -1,10 +1,16 @@
-// Swatsi Ratia PrntingCredits
+// Swatsi Ratia Printing Credits
 import React, { useState, useContext } from "react";
-import { View, Text, StyleSheet, TextInput, Alert, Image } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import ScreenHeader from "../components/ScreenHeader";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TextInput,
+  Alert,
+  ScrollView,
+} from "react-native";
 import { AppButton } from "../components/MobileButton";
 import { CreditsContext } from "../context/CreditsContext";
+import NavBar from "../components/NavigationBar";
 
 export default function LoadCreditsScreen() {
   const { credits, addCredits } = useContext(CreditsContext);
@@ -26,31 +32,40 @@ export default function LoadCreditsScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScreenHeader text="Load Printing Credits" />
+    <View style={styles.container}>
+      {/* ✅ Top NavBar */}
+      <NavBar title="Printing Credits" />
 
-      <View style={styles.balanceCard}>
-        <Text style={styles.balanceLabel}>Current Balance</Text>
-        <Text style={styles.balanceValue}>{credits} credits</Text>
-      </View>
+      {/* ✅ Scrollable Content */}
+      <ScrollView
+        style={styles.scrollArea}
+        contentContainerStyle={{ paddingBottom: 40 }}
+      >
+        <Text style={styles.header}>Load Printing Credits</Text>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Enter amount to load"
-        keyboardType="numeric"
-        value={amountToLoad}
-        onChangeText={setAmountToLoad}
-      />
+        <View style={styles.balanceCard}>
+          <Text style={styles.balanceLabel}>Current Balance</Text>
+          <Text style={styles.balanceValue}>{credits} credits</Text>
+        </View>
 
-      <AppButton style={styles.loadBtn} onPress={handleLoadCredits}>
-        Load Credits
-      </AppButton>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter amount to load"
+          keyboardType="numeric"
+          value={amountToLoad}
+          onChangeText={setAmountToLoad}
+        />
 
-      <Text style={styles.note}>
-        *In production, this could link to a payment gateway (e.g. PayFast,
-        PayPal).
-      </Text>
-    </SafeAreaView>
+        <AppButton style={styles.loadBtn} onPress={handleLoadCredits}>
+          Load Credits
+        </AppButton>
+
+        <Text style={styles.note}>
+          *In production, this could link to a payment gateway (e.g. PayFast,
+          PayPal).
+        </Text>
+      </ScrollView>
+    </View> // ✅ FIXED: Added missing closing tag
   );
 }
 
@@ -58,17 +73,19 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#F5F2F2",
-    padding: 20,
   },
-  headerRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 16,
+  scrollArea: {
+    flex: 1,
+    paddingHorizontal: 20,
+    paddingTop: 0, // ✅ Ensures no extra top space below navbar
   },
-  logo: {
-    width: 48,
-    height: 48,
-    marginRight: 12,
+  header: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#145DA0",
+    marginBottom: 20,
+    marginTop: 10,
+    textAlign: "center",
   },
   balanceCard: {
     backgroundColor: "#fff",
@@ -98,7 +115,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   loadBtn: {
-    marginBottom: 16,
     borderRadius: 10,
   },
   note: {

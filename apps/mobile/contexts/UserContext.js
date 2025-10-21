@@ -18,8 +18,19 @@ export const UserProvider = ({ children }) => {
     loadUser();
   }, []);
 
+  // Compute studentId from studentInfo if available
+  const studentId = studentInfo?.userId || null;
+
   return (
-    <UserContext.Provider value={{ token, setToken, studentInfo, setStudentInfo }}>
+    <UserContext.Provider
+      value={{
+        token,
+        setToken,
+        studentInfo,
+        setStudentInfo,
+        studentId, // <-- add this
+      }}
+    >
       {children}
     </UserContext.Provider>
   );
