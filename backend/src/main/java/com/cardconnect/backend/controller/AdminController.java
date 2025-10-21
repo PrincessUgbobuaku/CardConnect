@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 // src/main/java/com/cardconnect/controller/AdminController.java
 package com.cardconnect.backend.controller;
 

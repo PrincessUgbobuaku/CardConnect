@@ -1,6 +1,5 @@
 package com.cardconnect.backend.dto;
 
-
 import com.cardconnect.backend.domain.User;
 import java.time.LocalDate;
 
